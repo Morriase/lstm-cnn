@@ -1,0 +1,35 @@
+{
+  "metrics": {
+    "rmse": 206.79094480027408,
+    "mae": 151.24983223886616,
+    "r2": -104.06375043324167,
+    "mape": 7.10744643869034
+  },
+  "config": {
+    "lookback_window": 30,
+    "target_column": "Target",
+    "train_split": 0.8,
+    "lstm_units": 50,
+    "lstm_dropout": 0.2,
+    "cnn_filters": 64,
+    "cnn_kernel_size": 3,
+    "dense_units": 32,
+    "learning_rate": 0.001,
+    "epochs": 10,
+    "batch_size": 32,
+    "early_stopping_patience": 3,
+    "cv_folds": 5,
+    "use_cross_validation": false,
+    "outlier_threshold": 3.0,
+    "output_dir": "../results",
+    "model_filename": "lstm_cnn_xauusd.onnx"
+  },
+  "evaluation_metrics": {
+    "rmse": 206.79094480027408,
+    "mae": 151.24983223886616,
+    "r2": -104.06375043324167,
+    "mape": 7.10744643869034
+  },
+  "cv_results": null,
+  "timestamp": "2026-01-09T15:15:51.641279"
+}

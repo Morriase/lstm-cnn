@@ -1,0 +1,4 @@
+# file: C:\Users\Morris\AppData\Roaming\Python\Python313\site-packages\cachetools\keys.py
+# hypothesis_version: 6.148.8
+
+['hashkey', 'methodkey', 'typedkey', 'typedmethodkey']

@@ -1,0 +1,4 @@
+# file: C:\Users\Morris\AppData\Roaming\Python\Python313\site-packages\google\auth\iam.py
+# hypothesis_version: 6.148.8
+
+['Content-Type', 'POST', 'application/json', 'payload', 'signedBlob', 'utf-8']

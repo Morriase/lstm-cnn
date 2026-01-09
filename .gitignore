@@ -1,0 +1,88 @@
+# MetaTrader 5 system files and folders
+*.ex5
+*.ex4
+experts.dat
+news.dat
+mail/
+Logs/
+Tester/
+Profiles/
+history/
+bases/
+
+# MT5 default Expert Advisors (exclude everything except our project)
+Experts/*
+!Experts/lstm-cnn/
+
+# MT5 default Indicators
+Indicators/
+
+# MT5 default Scripts (exclude everything except our project)
+Scripts/
+
+# MT5 default Include files (exclude everything except our project)
+Include/
+
+# MT5 Files folder
+Files/
+
+# MT5 Presets
+Presets/
+
+# MT5 Images
+Images/
+
+# MT5 Libraries
+Libraries/
+
+# MT5 Services
+Services/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Model outputs (keep folder, ignore large files)
+*.onnx
+!Experts/lstm-cnn/Models/
+
+# Data files
+*.csv
+*.h5
+*.hdf5
