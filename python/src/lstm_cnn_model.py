@@ -13,7 +13,12 @@ Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 7.1, 7.2, 7.3, 7.4, 7.5
 
 import os
 import sys
+import warnings
 from typing import Dict, Any, Optional, Tuple, List
+
+# Silence warnings
+warnings.filterwarnings('ignore')
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import numpy as np
 
@@ -372,18 +377,44 @@ class LSTMCNNModel:
                 y_val = y_val.astype(np.float32)
                 X_val = X_val.astype(np.float32)
                 validation_data = (X_val, y_val)
-                logger.info(f"Using provided validation data: {X_val.shape[0]} samples")
+                logger.info(f"Validation samples: {X_val.shape[0]}")
+            
+            # Custom callback for progress every 10 epochs
+            class ProgressCallback(tf.keras.callbacks.Callback):
+                def __init__(self, X_val, y_val, print_every=10):
+                    super().__init__()
+                    self.X_val = X_val
+                    self.y_val = y_val
+                    self.print_every = print_every
+                
+                def on_epoch_end(self, epoch, logs=None):
+                    if (epoch + 1) % self.print_every == 0 or epoch == 0:
+                        loss = logs.get('loss', 0)
+                        val_loss = logs.get('val_loss', 0)
+                        
+                        # Calculate directional accuracy
+                        dir_acc = 0
+                        if self.X_val is not None and self.y_val is not None:
+                            y_pred = self.model.predict(self.X_val, verbose=0)
+                            if len(self.y_val) > 1:
+                                actual_dir = np.sign(np.diff(self.y_val.flatten()))
+                                pred_dir = np.sign(np.diff(y_pred.flatten()))
+                                dir_acc = np.mean(actual_dir == pred_dir) * 100
+                        
+                        print(f"Epoch {epoch+1:3d} | loss: {loss:.4f} | val_loss: {val_loss:.4f} | dir_acc: {dir_acc:.1f}%")
             
             # Callbacks
             callbacks = []
             
+            # Add progress callback
+            callbacks.append(ProgressCallback(X_val, y_val, print_every=10))
+            
             # Early stopping on validation loss
-            # Requirements: 6.6 - Implement early stopping based on validation loss
             early_stopping = EarlyStopping(
                 monitor='val_loss' if validation_data else 'loss',
                 patience=patience,
                 restore_best_weights=True,
-                verbose=1
+                verbose=0
             )
             callbacks.append(early_stopping)
             
@@ -393,28 +424,24 @@ class LSTMCNNModel:
                 factor=0.5,
                 patience=patience // 2,
                 min_lr=1e-6,
-                verbose=1
+                verbose=0
             )
             callbacks.append(lr_reducer)
             
-            # Train the model
-            # Requirements: 6.5 - Support configurable epochs and batch size
+            # Train the model silently (verbose=0), our callback handles output
             history = self.model.fit(
                 X_train, y_train,
                 epochs=epochs,
                 batch_size=global_batch_size,
                 validation_data=validation_data,
                 callbacks=callbacks,
-                verbose=verbose
+                verbose=0
             )
             
             # Store and return history
-            # Requirements: 6.7 - Return training history
             self.history = history.history
             
-            logger.info(f"Training complete. Final loss: {self.history['loss'][-1]:.6f}")
-            if 'val_loss' in self.history:
-                logger.info(f"Final validation loss: {self.history['val_loss'][-1]:.6f}")
+            logger.info(f"Training complete!")
             
             return self.history
             

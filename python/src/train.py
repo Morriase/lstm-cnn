@@ -15,15 +15,20 @@ Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 10.1-10.7
 import os
 import sys
 import json
+import warnings
 from datetime import datetime
 from typing import Dict, Any, Optional, Tuple, List
+
+# Silence warnings
+warnings.filterwarnings('ignore')
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 import numpy as np
 import pandas as pd
 
 from loguru import logger
 
-# Configure loguru
+# Configure loguru - clean format
 logger.remove()
 logger.add(
     sys.stderr,
@@ -334,8 +339,18 @@ class TrainingPipeline:
         y_pred = self.model.model.predict(X_test, verbose=0)
         self.evaluation_metrics = compute_all_metrics(y_test, y_pred)
         
-        logger.info(f"Test metrics: RMSE={self.evaluation_metrics['rmse']:.4f}, "
-                   f"MAE={self.evaluation_metrics['mae']:.4f}, R²={self.evaluation_metrics['r2']:.4f}")
+        logger.info("=" * 50)
+        logger.info("TEST RESULTS")
+        logger.info("=" * 50)
+        logger.info(f"RMSE: {self.evaluation_metrics['rmse']:.4f}")
+        logger.info(f"MAE: {self.evaluation_metrics['mae']:.4f}")
+        logger.info(f"R²: {self.evaluation_metrics['r2']:.4f}")
+        if self.evaluation_metrics.get('mape'):
+            logger.info(f"MAPE: {self.evaluation_metrics['mape']:.2f}%")
+        if self.evaluation_metrics.get('directional_accuracy'):
+            logger.info(f"Directional Accuracy: {self.evaluation_metrics['directional_accuracy']:.1f}%")
+        logger.info("=" * 50)
+        
         return self.evaluation_metrics
     
     def export_onnx(self, output_path: Optional[str] = None) -> str:

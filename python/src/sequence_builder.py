@@ -153,11 +153,17 @@ class SequenceBuilder:
         
         # Normalize features and targets (min-max scaling to [0, 1])
         if normalize:
-            # Store min/max for denormalization later
-            self.feature_min = features.min(axis=0)
-            self.feature_max = features.max(axis=0)
-            self.target_min = targets.min()
-            self.target_max = targets.max()
+            # Only compute stats if not already set (training data)
+            # For test data, use existing stats from training
+            if self.feature_min is None or self.feature_max is None:
+                self.feature_min = features.min(axis=0)
+                self.feature_max = features.max(axis=0)
+                self.target_min = targets.min()
+                self.target_max = targets.max()
+                logger.info(f"Computed normalization stats from training data")
+                logger.info(f"Target range: [{self.target_min:.2f}, {self.target_max:.2f}]")
+            else:
+                logger.info(f"Using existing normalization stats (test data)")
             
             # Avoid division by zero
             feature_range = self.feature_max - self.feature_min
@@ -170,7 +176,6 @@ class SequenceBuilder:
             targets = (targets - self.target_min) / target_range
             
             logger.info(f"Normalized features to [0, 1] range")
-            logger.info(f"Target range: [{self.target_min:.2f}, {self.target_max:.2f}]")
         
         # Check if we have enough data
         # We need at least lookback + 1 samples to create one sequence
