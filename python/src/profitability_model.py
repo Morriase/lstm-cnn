@@ -106,8 +106,6 @@ class ProfitabilityClassifier:
             dropout_rate = self.config['dropout_rate']
             learning_rate = self.config['learning_rate']
             
-            logger.info(f"Building profitability model: lookback={lookback}, features={num_features}")
-            
             # Input layer
             inputs = Input(shape=(lookback, num_features), name='input')
             
@@ -125,17 +123,19 @@ class ProfitabilityClassifier:
             x = Dense(dense_units, activation='relu', name='dense1')(x)
             x = Dropout(dropout_rate, name='dropout')(x)
             
-            # Output: 2 independent probabilities (not softmax - they're independent)
-            outputs = Dense(2, activation='sigmoid', name='output', dtype='float32')(x)
+            # Two separate output heads for independent binary classification
+            long_output = Dense(1, activation='sigmoid', name='long_output', dtype='float32')(x)
+            short_output = Dense(1, activation='sigmoid', name='short_output', dtype='float32')(x)
             
-            self.model = Model(inputs=inputs, outputs=outputs, name='profitability_classifier')
+            self.model = Model(inputs=inputs, outputs=[long_output, short_output], 
+                              name='profitability_classifier')
             
-            # Compile with binary crossentropy per output
+            # Compile with separate losses for each output
             optimizer = Adam(learning_rate=learning_rate)
             self.model.compile(
                 optimizer=optimizer,
-                loss=tf.keras.losses.BinaryCrossentropy(from_logits=False, reduction='sum_over_batch_size'),
-                metrics=['accuracy']
+                loss={'long_output': 'binary_crossentropy', 'short_output': 'binary_crossentropy'},
+                metrics={'long_output': 'accuracy', 'short_output': 'accuracy'}
             )
             
             self._is_built = True
@@ -242,6 +242,10 @@ class ProfitabilityClassifier:
             X_train = X_train[valid_mask]
             y_train = y_train[valid_mask]
             
+            # Split y into two separate arrays for two-head model
+            y_long = y_train[:, 0:1]  # Keep as 2D [samples, 1]
+            y_short = y_train[:, 1:2]
+            
             logger.info(f"Training on {len(X_train)} samples (filtered NaN)")
             
             validation_data = None
@@ -252,7 +256,9 @@ class ProfitabilityClassifier:
                 val_valid_mask = ~np.any(np.isnan(y_val), axis=1)
                 X_val = X_val[val_valid_mask]
                 y_val = y_val[val_valid_mask]
-                validation_data = (X_val, y_val)
+                y_val_long = y_val[:, 0:1]
+                y_val_short = y_val[:, 1:2]
+                validation_data = (X_val, {'long_output': y_val_long, 'short_output': y_val_short})
             
             # Custom callback for progress
             class ProgressCallback(tf.keras.callbacks.Callback):
@@ -263,10 +269,12 @@ class ProfitabilityClassifier:
                 def on_epoch_end(self, epoch, logs=None):
                     if (epoch + 1) % self.print_every == 0 or epoch == 0:
                         loss = logs.get('loss', 0)
-                        acc = logs.get('accuracy', 0) * 100
+                        long_acc = logs.get('long_output_accuracy', 0) * 100
+                        short_acc = logs.get('short_output_accuracy', 0) * 100
                         val_loss = logs.get('val_loss', 0)
-                        val_acc = logs.get('val_accuracy', 0) * 100
-                        print(f"  [Profit] Epoch {epoch+1:3d} | BCE: {loss:.4f} | val_BCE: {val_loss:.4f} | acc: {acc:.1f}% | val_acc: {val_acc:.1f}%")
+                        val_long_acc = logs.get('val_long_output_accuracy', 0) * 100
+                        val_short_acc = logs.get('val_short_output_accuracy', 0) * 100
+                        print(f"  [Profit] Epoch {epoch+1:3d} | loss: {loss:.4f} | long_acc: {long_acc:.1f}% | short_acc: {short_acc:.1f}% | val_loss: {val_loss:.4f}")
             
             callbacks = [
                 ProgressCallback(print_every=10),
@@ -286,7 +294,7 @@ class ProfitabilityClassifier:
             ]
             
             history = self.model.fit(
-                X_train, y_train,
+                X_train, {'long_output': y_long, 'short_output': y_short},
                 epochs=epochs,
                 batch_size=batch_size,
                 validation_data=validation_data,
@@ -316,12 +324,9 @@ class ProfitabilityClassifier:
             raise ValueError("Model not built or trained.")
         
         X = X.astype(np.float32)
-        predictions = self.model.predict(X, verbose=0)
+        long_pred, short_pred = self.model.predict(X, verbose=0)
         
-        p_long_wins = predictions[:, 0]
-        p_short_wins = predictions[:, 1]
-        
-        return p_long_wins, p_short_wins
+        return long_pred.flatten(), short_pred.flatten()
     
     def export_onnx(self, output_path: str, validate: bool = True) -> str:
         """
@@ -411,7 +416,10 @@ class ProfitabilityClassifier:
                 # Dense layers
                 self.dense1 = nn.Linear(conv2_filters, dense_units)
                 self.dropout = nn.Dropout(dropout_rate)
-                self.output = nn.Linear(dense_units, 2)
+                
+                # Two output heads
+                self.long_output = nn.Linear(dense_units, 1)
+                self.short_output = nn.Linear(dense_units, 1)
                 
                 self.relu = nn.ReLU()
                 self.sigmoid = nn.Sigmoid()
@@ -427,9 +435,12 @@ class ProfitabilityClassifier:
                 
                 x = self.relu(self.dense1(x))
                 x = self.dropout(x)
-                x = self.sigmoid(self.output(x))
                 
-                return x
+                long_out = self.sigmoid(self.long_output(x))
+                short_out = self.sigmoid(self.short_output(x))
+                
+                # Concatenate for single output tensor [batch, 2]
+                return torch.cat([long_out, short_out], dim=1)
         
         return ProfitabilityCNN()
     
@@ -461,13 +472,17 @@ class ProfitabilityClassifier:
             pytorch_model.dense1.weight.data = torch.tensor(kernel.T, dtype=torch.float32)
             pytorch_model.dense1.bias.data = torch.tensor(bias, dtype=torch.float32)
         
-        # Output
-        if 'output' in keras_weights and len(keras_weights['output']) >= 2:
-            kernel, bias = keras_weights['output'][:2]
-            pytorch_model.output.weight.data = torch.tensor(kernel.T, dtype=torch.float32)
-            pytorch_model.output.bias.data = torch.tensor(bias, dtype=torch.float32)
+        # Long output
+        if 'long_output' in keras_weights and len(keras_weights['long_output']) >= 2:
+            kernel, bias = keras_weights['long_output'][:2]
+            pytorch_model.long_output.weight.data = torch.tensor(kernel.T, dtype=torch.float32)
+            pytorch_model.long_output.bias.data = torch.tensor(bias, dtype=torch.float32)
         
-        logger.info("Weights transferred to PyTorch model")
+        # Short output
+        if 'short_output' in keras_weights and len(keras_weights['short_output']) >= 2:
+            kernel, bias = keras_weights['short_output'][:2]
+            pytorch_model.short_output.weight.data = torch.tensor(kernel.T, dtype=torch.float32)
+            pytorch_model.short_output.bias.data = torch.tensor(bias, dtype=torch.float32)
     
     def _validate_onnx(self, onnx_path: str) -> bool:
         """Validate the exported ONNX model."""
