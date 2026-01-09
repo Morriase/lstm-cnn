@@ -77,8 +77,6 @@ class ProfitabilityClassifier:
         self.model = None
         self.history = None
         self._is_built = False
-        
-        logger.info(f"ProfitabilityClassifier initialized with config: {self.config}")
     
     def build_model(self) -> 'tf.keras.Model':
         """
@@ -141,8 +139,8 @@ class ProfitabilityClassifier:
             )
             
             self._is_built = True
-            logger.info("Profitability model built successfully")
-            self.model.summary(print_fn=logger.info)
+            total_params = self.model.count_params()
+            logger.info(f"Model built: {total_params:,} parameters")
             
             return self.model
             
@@ -237,9 +235,6 @@ class ProfitabilityClassifier:
             # Ensure correct dtypes
             X_train = X_train.astype(np.float32)
             y_train = y_train.astype(np.float32)
-            
-            logger.info(f"Training profitability model: epochs={epochs}, batch_size={batch_size}")
-            logger.info(f"Training samples: {X_train.shape[0]}")
             
             # Handle NaN in labels using sample weights
             # Create sample weights: 0 for NaN labels, 1 for valid

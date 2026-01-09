@@ -70,7 +70,7 @@ DEFAULT_TRAINING_CONFIG = {
     'batch_size': 128,
     'early_stopping_patience': 10,
     'cv_folds': 5,
-    'use_cross_validation': True,
+    'use_cross_validation': False,  # Disabled by default - too noisy
     'outlier_threshold': 3.0,
     'output_dir': '/kaggle/working/results',
     'model_filename': 'lstm_cnn_xauusd.onnx',

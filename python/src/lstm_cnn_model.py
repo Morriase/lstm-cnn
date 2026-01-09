@@ -179,7 +179,7 @@ class LSTMCNNModel:
         self._is_built = False
         self.strategy = None
         
-        # Setup GPU and get distribution strategy
+        # Setup GPU and get distribution strategy (quiet mode)
         self.strategy = setup_gpu()
         
         # Enable mixed precision for T4 GPUs (Tensor Cores)
@@ -187,11 +187,8 @@ class LSTMCNNModel:
             try:
                 import tensorflow as tf
                 tf.keras.mixed_precision.set_global_policy('mixed_float16')
-                logger.info("Mixed precision (FP16) enabled for faster training")
-            except Exception as e:
-                logger.warning(f"Could not enable mixed precision: {e}")
-        
-        logger.info(f"LSTMCNNModel initialized with config: {self.config}")
+            except Exception:
+                pass
 
     def build_model(self) -> 'tf.keras.Model':
         """
@@ -293,11 +290,9 @@ class LSTMCNNModel:
             
             self._is_built = True
             
-            # Log model summary and GPU info
-            logger.info("Model built successfully")
-            if hasattr(self.strategy, 'num_replicas_in_sync'):
-                logger.info(f"Model distributed across {self.strategy.num_replicas_in_sync} GPU(s)")
-            self.model.summary(print_fn=logger.info)
+            # Log model info (no summary - too verbose)
+            total_params = self.model.count_params()
+            logger.info(f"Model built: {total_params:,} parameters")
             
             return self.model
             
@@ -356,7 +351,6 @@ class LSTMCNNModel:
             # Scale batch size for multi-GPU (effective batch = batch_size * num_gpus)
             num_replicas = getattr(self.strategy, 'num_replicas_in_sync', 1)
             global_batch_size = batch_size * num_replicas
-            logger.info(f"Batch size: {batch_size} per GPU, {global_batch_size} global ({num_replicas} GPU(s))")
             
             # Validate input shapes
             expected_shape = (self.config['lookback'], self.config['num_features'])
@@ -371,9 +365,6 @@ class LSTMCNNModel:
             y_train = y_train.astype(np.float32)
             X_train = X_train.astype(np.float32)
             
-            logger.info(f"Training model: epochs={epochs}, batch_size={global_batch_size}, "
-                       f"samples={X_train.shape[0]}")
-            
             # Prepare validation data
             validation_data = None
             if X_val is not None and y_val is not None:
@@ -382,7 +373,6 @@ class LSTMCNNModel:
                 y_val = y_val.astype(np.float32)
                 X_val = X_val.astype(np.float32)
                 validation_data = (X_val, y_val)
-                logger.info(f"Validation samples: {X_val.shape[0]}")
             
             # Custom callback for progress every 10 epochs
             class ProgressCallback(tf.keras.callbacks.Callback):
@@ -447,8 +437,6 @@ class LSTMCNNModel:
             
             # Store and return history
             self.history = history.history
-            
-            logger.info(f"Training complete!")
             
             return self.history
             
