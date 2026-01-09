@@ -262,36 +262,23 @@ class ProfitabilityClassifier:
             logger.info(f"Training on {len(X_train)} samples (filtered NaN)")
             logger.info(f"Long class balance: {long_pos} wins / {long_neg} losses ({100*long_pos/(long_pos+long_neg):.1f}% win rate)")
             logger.info(f"Short class balance: {short_pos} wins / {short_neg} losses ({100*short_pos/(short_pos+short_neg):.1f}% win rate)")
-            logger.info(f"Class weights - Long: {{0: {long_weight_0:.2f}, 1: {long_weight_1:.2f}}}")
-            logger.info(f"Class weights - Short: {{0: {short_weight_0:.2f}, 1: {short_weight_1:.2f}}}")
             
-            # Recompile model with weighted loss functions
-            # This is more compatible with Keras 3 than sample_weight
-            # Cast weights to float32 to match TensorFlow types
-            long_w0 = tf.constant(long_weight_0, dtype=tf.float32)
-            long_w1 = tf.constant(long_weight_1, dtype=tf.float32)
-            short_w0 = tf.constant(short_weight_0, dtype=tf.float32)
-            short_w1 = tf.constant(short_weight_1, dtype=tf.float32)
+            # Oversample minority class (wins) to balance the dataset
+            # Find indices of wins and losses
+            long_win_idx = np.where(y_long[:, 0] == 1)[0]
+            long_loss_idx = np.where(y_long[:, 0] == 0)[0]
+            short_win_idx = np.where(y_short[:, 0] == 1)[0]
+            short_loss_idx = np.where(y_short[:, 0] == 0)[0]
             
-            def weighted_bce_long(y_true, y_pred):
-                bce = tf.keras.losses.binary_crossentropy(y_true, y_pred)
-                weights = tf.where(tf.equal(y_true, 1), long_w1, long_w0)
-                weights = tf.squeeze(weights)
-                return bce * weights
-            
-            def weighted_bce_short(y_true, y_pred):
-                bce = tf.keras.losses.binary_crossentropy(y_true, y_pred)
-                weights = tf.where(tf.equal(y_true, 1), short_w1, short_w0)
-                weights = tf.squeeze(weights)
-                return bce * weights
-            
-            # Recompile with weighted losses
-            from tensorflow.keras.optimizers import Adam
-            self.model.compile(
-                optimizer=Adam(learning_rate=self.config['learning_rate']),
-                loss={'long_output': weighted_bce_long, 'short_output': weighted_bce_short},
-                metrics={'long_output': 'accuracy', 'short_output': 'accuracy'}
-            )
+            # Oversample wins to match losses count
+            if len(long_win_idx) < len(long_loss_idx):
+                oversample_count = len(long_loss_idx) - len(long_win_idx)
+                oversampled_idx = np.random.choice(long_win_idx, size=oversample_count, replace=True)
+                all_idx = np.concatenate([np.arange(len(X_train)), oversampled_idx])
+                X_train = X_train[all_idx]
+                y_long = y_long[all_idx]
+                y_short = y_short[all_idx]
+                logger.info(f"Oversampled {oversample_count} long wins, new total: {len(X_train)}")
             
             
             validation_data = None
