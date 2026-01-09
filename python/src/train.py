@@ -40,6 +40,7 @@ logger.add(
 from data_cleaner import DataCleaner, DataCleaningError
 from sequence_builder import SequenceBuilder, SequenceBuilderError
 from lstm_cnn_model import LSTMCNNModel, ModelBuildError, ModelTrainingError, ONNXExportError
+from profitability_model import ProfitabilityClassifier, ProfitabilityModelError
 from metrics import (
     MetricsReporter, compute_all_metrics,
     plot_loss_curves, plot_predictions,
@@ -69,6 +70,12 @@ DEFAULT_TRAINING_CONFIG = {
     'outlier_threshold': 3.0,
     'output_dir': '/kaggle/working/results',
     'model_filename': 'lstm_cnn_xauusd.onnx',
+    # Dual-model settings
+    'train_profitability_model': True,
+    'profitability_model_filename': 'profitability_classifier.onnx',
+    'scalers_filename': 'scalers.csv',
+    'long_outcome_column': 'Long_Outcome',
+    'short_outcome_column': 'Short_Outcome',
 }
 
 
@@ -96,6 +103,7 @@ class TrainingPipeline:
             lookback=self.config['lookback_window']
         )
         self.model = None
+        self.profitability_model = None
         self.metrics_reporter = None
         
         self.raw_data = None
@@ -107,7 +115,14 @@ class TrainingPipeline:
         self.train_indices = None
         self.test_indices = None
         
+        # Triple barrier outcome data
+        self.long_outcomes_train = None
+        self.short_outcomes_train = None
+        self.long_outcomes_test = None
+        self.short_outcomes_test = None
+        
         self.training_history = None
+        self.profitability_history = None
         self.evaluation_metrics = None
         self.cv_results = None
         
@@ -179,12 +194,45 @@ class TrainingPipeline:
             target_column = self.config['target_column']
         
         logger.info("Building sequences...")
+        
+        # Check for triple barrier outcome columns
+        long_col = self.config.get('long_outcome_column', 'Long_Outcome')
+        short_col = self.config.get('short_outcome_column', 'Short_Outcome')
+        has_outcomes = long_col in train_df.columns and short_col in train_df.columns
+        
+        if has_outcomes:
+            logger.info("Found triple barrier outcome columns, extracting...")
+            # Extract outcomes before dropping them for sequence building
+            train_long = train_df[long_col].values
+            train_short = train_df[short_col].values
+            test_long = test_df[long_col].values
+            test_short = test_df[short_col].values
+            
+            # Drop outcome columns for feature sequences
+            train_features = train_df.drop(columns=[long_col, short_col])
+            test_features = test_df.drop(columns=[long_col, short_col])
+        else:
+            train_features = train_df
+            test_features = test_df
+            train_long = train_short = test_long = test_short = None
+        
         self.X_train, self.y_train = self.sequence_builder.create_sequences(
-            train_df, target_column=target_column
+            train_features, target_column=target_column
         )
         self.X_test, self.y_test = self.sequence_builder.create_sequences(
-            test_df, target_column=target_column
+            test_features, target_column=target_column
         )
+        
+        # Align outcomes with sequences (offset by lookback)
+        if has_outcomes:
+            lookback = self.config['lookback_window']
+            self.long_outcomes_train = train_long[lookback:]
+            self.short_outcomes_train = train_short[lookback:]
+            self.long_outcomes_test = test_long[lookback:]
+            self.short_outcomes_test = test_short[lookback:]
+            
+            logger.info(f"Triple barrier outcomes aligned: train={len(self.long_outcomes_train)}, "
+                       f"test={len(self.long_outcomes_test)}")
         
         logger.info(f"Training sequences: X={self.X_train.shape}, y={self.y_train.shape}")
         logger.info(f"Test sequences: X={self.X_test.shape}, y={self.y_test.shape}")
@@ -367,6 +415,104 @@ class TrainingPipeline:
         logger.info(f"Exporting model to ONNX: {output_path}")
         return self.model.export_onnx(output_path)
     
+    def train_profitability_model(
+        self,
+        verbose: int = 1
+    ) -> Optional[Dict[str, List[float]]]:
+        """
+        Train the profitability classifier on triple barrier labeled data.
+        
+        Only trains on samples where either TP or SL was hit (excludes -1 outcomes).
+        
+        Returns:
+            Training history or None if no outcome data available
+        """
+        if self.long_outcomes_train is None or self.short_outcomes_train is None:
+            logger.warning("No triple barrier outcomes available, skipping profitability model")
+            return None
+        
+        logger.info("=" * 50)
+        logger.info("Training Profitability Classifier")
+        logger.info("=" * 50)
+        
+        # Initialize profitability model
+        num_features = self.X_train.shape[2]
+        prof_config = {
+            'lookback': self.config['lookback_window'],
+            'num_features': num_features,
+            'epochs': self.config['epochs'],
+            'batch_size': self.config['batch_size'],
+            'early_stopping_patience': self.config['early_stopping_patience'],
+        }
+        
+        self.profitability_model = ProfitabilityClassifier(config=prof_config)
+        self.profitability_model.build_model()
+        
+        # Filter to valid samples and prepare labels
+        X_prof, y_long, y_short = self.profitability_model.filter_valid_samples(
+            self.X_train,
+            self.long_outcomes_train,
+            self.short_outcomes_train
+        )
+        
+        # Stack labels: [samples, 2] for [long_outcome, short_outcome]
+        y_prof = np.stack([y_long, y_short], axis=1)
+        
+        # Prepare validation data
+        X_val_prof = None
+        y_val_prof = None
+        if self.long_outcomes_test is not None:
+            X_val_prof, y_long_val, y_short_val = self.profitability_model.filter_valid_samples(
+                self.X_test,
+                self.long_outcomes_test,
+                self.short_outcomes_test
+            )
+            y_val_prof = np.stack([y_long_val, y_short_val], axis=1)
+        
+        # Train
+        self.profitability_history = self.profitability_model.train(
+            X_prof, y_prof,
+            X_val=X_val_prof, y_val=y_val_prof,
+            verbose=verbose
+        )
+        
+        return self.profitability_history
+    
+    def export_profitability_onnx(self, output_path: Optional[str] = None) -> Optional[str]:
+        """Export profitability model to ONNX format."""
+        if self.profitability_model is None:
+            logger.warning("No profitability model to export")
+            return None
+        
+        if output_path is None:
+            output_dir = self.config['output_dir']
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            output_path = os.path.join(output_dir, self.config['profitability_model_filename'])
+        
+        logger.info(f"Exporting profitability model to ONNX: {output_path}")
+        return self.profitability_model.export_onnx(output_path)
+    
+    def export_scalers(self, output_path: Optional[str] = None) -> str:
+        """Export normalization scalers to CSV for MQL5."""
+        if output_path is None:
+            output_dir = self.config['output_dir']
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            output_path = os.path.join(output_dir, self.config['scalers_filename'])
+        
+        # Get feature names from clean data (excluding target and outcome columns)
+        feature_names = None
+        if self.clean_data is not None:
+            cols = list(self.clean_data.columns)
+            # Remove target and outcome columns
+            for col in ['Target', 'Long_Outcome', 'Short_Outcome']:
+                if col in cols:
+                    cols.remove(col)
+            feature_names = cols
+        
+        return self.sequence_builder.export_scalers_csv(output_path, feature_names)
+    
     def generate_plots(
         self,
         y_test: Optional[np.ndarray] = None,
@@ -457,6 +603,10 @@ class TrainingPipeline:
         
         Sequence: Load → Clean → Split → Sequences → CV → Train → Evaluate → Export
         
+        For dual-model system:
+        - Price predictor trained on all samples
+        - Profitability classifier trained on samples with valid outcomes
+        
         Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 10.1-10.7
         """
         logger.info("=" * 60)
@@ -482,33 +632,52 @@ class TrainingPipeline:
         if self.config['use_cross_validation']:
             self.cross_validate(verbose=verbose)
         
-        # Step 6: Train final model on full training set
+        # Step 6: Train final price predictor model on full training set
+        logger.info("=" * 50)
+        logger.info("Training Price Predictor Model")
+        logger.info("=" * 50)
         self.build_model()
         self.train_model(verbose=verbose)
         
-        # Step 7: Evaluate on test set
+        # Step 7: Train profitability classifier (if enabled and data available)
+        profitability_onnx_path = None
+        if self.config.get('train_profitability_model', True):
+            self.train_profitability_model(verbose=verbose)
+        
+        # Step 8: Evaluate on test set
         self.evaluate()
         
-        # Step 8: Generate plots
+        # Step 9: Generate plots
         plots = self.generate_plots()
         
-        # Step 9: Export ONNX model
+        # Step 10: Export ONNX models
         onnx_path = self.export_onnx()
         
-        # Step 10: Save results
+        if self.profitability_model is not None:
+            profitability_onnx_path = self.export_profitability_onnx()
+        
+        # Step 11: Export scalers
+        scalers_path = self.export_scalers()
+        
+        # Step 12: Save results
         saved_files = self.save_results()
         
         results = {
             'evaluation_metrics': self.evaluation_metrics,
             'cv_results': self.cv_results,
             'onnx_path': onnx_path,
+            'profitability_onnx_path': profitability_onnx_path,
+            'scalers_path': scalers_path,
             'plots': plots,
             'saved_files': saved_files,
         }
         
         logger.info("=" * 60)
         logger.info("Training pipeline complete!")
-        logger.info(f"ONNX model saved to: {onnx_path}")
+        logger.info(f"Price predictor ONNX: {onnx_path}")
+        if profitability_onnx_path:
+            logger.info(f"Profitability classifier ONNX: {profitability_onnx_path}")
+        logger.info(f"Scalers CSV: {scalers_path}")
         logger.info(f"Results saved to: {self.config['output_dir']}")
         logger.info("=" * 60)
         

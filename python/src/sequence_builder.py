@@ -14,7 +14,7 @@ Requirements: 5.1, 5.2, 5.4, 5.5, 5.6
 import sys
 import numpy as np
 import pandas as pd
-from typing import Tuple, Optional, Union
+from typing import Tuple, Optional, Union, List, Dict
 
 from loguru import logger
 
@@ -362,3 +362,103 @@ class SequenceBuilder:
                 )
                 return data[0:0]  # Return empty array with same shape[1:]
             return data
+
+    def export_scalers_csv(
+        self,
+        output_path: str,
+        feature_names: Optional[List[str]] = None
+    ) -> str:
+        """
+        Export normalization scalers to CSV format for MQL5 resource embedding.
+        
+        CSV format:
+            feature_name,min_value,max_value
+            Volume,1.0,149492.0
+            BB_Upper,1056.06,2083.63
+            ...
+            Target,1050.0,2070.29
+        
+        Args:
+            output_path: Path to save the CSV file
+            feature_names: Optional list of feature names (uses indices if not provided)
+        
+        Returns:
+            Path to the saved CSV file
+        
+        Raises:
+            ValueError: If scalers have not been computed yet
+        """
+        if self.feature_min is None or self.feature_max is None:
+            raise ValueError("Scalers not computed. Call create_sequences() first.")
+        
+        import os
+        output_dir = os.path.dirname(output_path)
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        
+        n_features = len(self.feature_min)
+        
+        if feature_names is None:
+            feature_names = [f"feature_{i}" for i in range(n_features)]
+        
+        if len(feature_names) != n_features:
+            logger.warning(f"Feature names count ({len(feature_names)}) != features ({n_features})")
+            feature_names = [f"feature_{i}" for i in range(n_features)]
+        
+        with open(output_path, 'w') as f:
+            f.write("feature_name,min_value,max_value\n")
+            
+            for i, name in enumerate(feature_names):
+                f.write(f"{name},{self.feature_min[i]:.8f},{self.feature_max[i]:.8f}\n")
+            
+            # Add target scaler
+            f.write(f"Target,{self.target_min:.8f},{self.target_max:.8f}\n")
+        
+        logger.info(f"Scalers exported to: {output_path}")
+        logger.info(f"  Features: {n_features}, Target range: [{self.target_min:.2f}, {self.target_max:.2f}]")
+        
+        return output_path
+    
+    def load_scalers_csv(self, csv_path: str) -> Dict[str, Tuple[float, float]]:
+        """
+        Load normalization scalers from CSV file.
+        
+        Args:
+            csv_path: Path to the scalers CSV file
+        
+        Returns:
+            Dictionary mapping feature names to (min, max) tuples
+        """
+        import os
+        if not os.path.exists(csv_path):
+            raise FileNotFoundError(f"Scalers file not found: {csv_path}")
+        
+        scalers = {}
+        feature_mins = []
+        feature_maxs = []
+        
+        with open(csv_path, 'r') as f:
+            header = f.readline()  # Skip header
+            
+            for line in f:
+                parts = line.strip().split(',')
+                if len(parts) >= 3:
+                    name = parts[0]
+                    min_val = float(parts[1])
+                    max_val = float(parts[2])
+                    scalers[name] = (min_val, max_val)
+                    
+                    if name == 'Target':
+                        self.target_min = min_val
+                        self.target_max = max_val
+                    else:
+                        feature_mins.append(min_val)
+                        feature_maxs.append(max_val)
+        
+        self.feature_min = np.array(feature_mins)
+        self.feature_max = np.array(feature_maxs)
+        
+        logger.info(f"Loaded scalers from: {csv_path}")
+        logger.info(f"  Features: {len(feature_mins)}, Target range: [{self.target_min:.2f}, {self.target_max:.2f}]")
+        
+        return scalers
