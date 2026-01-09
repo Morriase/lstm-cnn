@@ -267,15 +267,21 @@ class ProfitabilityClassifier:
             
             # Recompile model with weighted loss functions
             # This is more compatible with Keras 3 than sample_weight
+            # Cast weights to float32 to match TensorFlow types
+            long_w0 = tf.constant(long_weight_0, dtype=tf.float32)
+            long_w1 = tf.constant(long_weight_1, dtype=tf.float32)
+            short_w0 = tf.constant(short_weight_0, dtype=tf.float32)
+            short_w1 = tf.constant(short_weight_1, dtype=tf.float32)
+            
             def weighted_bce_long(y_true, y_pred):
                 bce = tf.keras.losses.binary_crossentropy(y_true, y_pred)
-                weights = tf.where(tf.equal(y_true, 1), long_weight_1, long_weight_0)
+                weights = tf.where(tf.equal(y_true, 1), long_w1, long_w0)
                 weights = tf.squeeze(weights)
                 return bce * weights
             
             def weighted_bce_short(y_true, y_pred):
                 bce = tf.keras.losses.binary_crossentropy(y_true, y_pred)
-                weights = tf.where(tf.equal(y_true, 1), short_weight_1, short_weight_0)
+                weights = tf.where(tf.equal(y_true, 1), short_w1, short_w0)
                 weights = tf.squeeze(weights)
                 return bce * weights
             
