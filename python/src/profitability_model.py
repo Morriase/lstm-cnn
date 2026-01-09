@@ -130,11 +130,11 @@ class ProfitabilityClassifier:
             
             self.model = Model(inputs=inputs, outputs=outputs, name='profitability_classifier')
             
-            # Compile with binary crossentropy (independent binary classifications)
+            # Compile with binary crossentropy per output
             optimizer = Adam(learning_rate=learning_rate)
             self.model.compile(
                 optimizer=optimizer,
-                loss='binary_crossentropy',
+                loss=tf.keras.losses.BinaryCrossentropy(from_logits=False, reduction='sum_over_batch_size'),
                 metrics=['accuracy']
             )
             
