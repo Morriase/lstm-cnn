@@ -38,6 +38,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# Kaggle dataset path (hardcoded)
+KAGGLE_DATA_PATH = '/kaggle/input/lstm-cnn/lstm_cnn_data/training_data.csv'
+
 # Default training configuration
 DEFAULT_TRAINING_CONFIG = {
     'lookback_window': 30,
@@ -50,12 +53,12 @@ DEFAULT_TRAINING_CONFIG = {
     'dense_units': 32,
     'learning_rate': 0.001,
     'epochs': 150,
-    'batch_size': 64,
+    'batch_size': 128,
     'early_stopping_patience': 10,
     'cv_folds': 5,
     'use_cross_validation': True,
     'outlier_threshold': 3.0,
-    'output_dir': 'results',
+    'output_dir': '/kaggle/working/results',
     'model_filename': 'lstm_cnn_xauusd.onnx',
 }
 
@@ -498,11 +501,11 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description='Train LSTM-CNN XAUUSD model')
-    parser.add_argument('csv_path', help='Path to training CSV file')
-    parser.add_argument('--output-dir', default='results', help='Output directory')
+    parser.add_argument('--csv-path', default=KAGGLE_DATA_PATH, help='Path to training CSV file')
+    parser.add_argument('--output-dir', default='/kaggle/working/results', help='Output directory')
     parser.add_argument('--lookback', type=int, default=30, help='Lookback window')
     parser.add_argument('--epochs', type=int, default=150, help='Training epochs')
-    parser.add_argument('--batch-size', type=int, default=64, help='Batch size')
+    parser.add_argument('--batch-size', type=int, default=128, help='Batch size')
     parser.add_argument('--no-cv', action='store_true', help='Skip cross-validation')
     parser.add_argument('--verbose', type=int, default=1, help='Verbosity level')
     
