@@ -265,12 +265,14 @@ class ProfitabilityClassifier:
             logger.info(f"Class weights - Long: {{0: {long_weight_0:.2f}, 1: {long_weight_1:.2f}}}")
             logger.info(f"Class weights - Short: {{0: {short_weight_0:.2f}, 1: {short_weight_1:.2f}}}")
             
-            # Create sample weights (average of long and short weights for each sample)
-            sample_weights = np.zeros(len(y_train))
-            for i in range(len(y_train)):
-                lw = long_weight_1 if y_long[i, 0] == 1 else long_weight_0
-                sw = short_weight_1 if y_short[i, 0] == 1 else short_weight_0
-                sample_weights[i] = (lw + sw) / 2
+            # Create sample weights for each output head
+            # For multi-output models, sample_weight must be a dict
+            sample_weights_long = np.where(y_long[:, 0] == 1, long_weight_1, long_weight_0)
+            sample_weights_short = np.where(y_short[:, 0] == 1, short_weight_1, short_weight_0)
+            sample_weights = {
+                'long_output': sample_weights_long,
+                'short_output': sample_weights_short
+            }
             
             
             validation_data = None
