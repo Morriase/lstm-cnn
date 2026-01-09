@@ -265,14 +265,27 @@ class ProfitabilityClassifier:
             logger.info(f"Class weights - Long: {{0: {long_weight_0:.2f}, 1: {long_weight_1:.2f}}}")
             logger.info(f"Class weights - Short: {{0: {short_weight_0:.2f}, 1: {short_weight_1:.2f}}}")
             
-            # Create sample weights for each output head
-            # For multi-output models, sample_weight must be a dict
-            sample_weights_long = np.where(y_long[:, 0] == 1, long_weight_1, long_weight_0)
-            sample_weights_short = np.where(y_short[:, 0] == 1, short_weight_1, short_weight_0)
-            sample_weights = {
-                'long_output': sample_weights_long,
-                'short_output': sample_weights_short
-            }
+            # Recompile model with weighted loss functions
+            # This is more compatible with Keras 3 than sample_weight
+            def weighted_bce_long(y_true, y_pred):
+                bce = tf.keras.losses.binary_crossentropy(y_true, y_pred)
+                weights = tf.where(tf.equal(y_true, 1), long_weight_1, long_weight_0)
+                weights = tf.squeeze(weights)
+                return bce * weights
+            
+            def weighted_bce_short(y_true, y_pred):
+                bce = tf.keras.losses.binary_crossentropy(y_true, y_pred)
+                weights = tf.where(tf.equal(y_true, 1), short_weight_1, short_weight_0)
+                weights = tf.squeeze(weights)
+                return bce * weights
+            
+            # Recompile with weighted losses
+            from tensorflow.keras.optimizers import Adam
+            self.model.compile(
+                optimizer=Adam(learning_rate=self.config['learning_rate']),
+                loss={'long_output': weighted_bce_long, 'short_output': weighted_bce_short},
+                metrics={'long_output': 'accuracy', 'short_output': 'accuracy'}
+            )
             
             
             validation_data = None
@@ -325,7 +338,6 @@ class ProfitabilityClassifier:
                 epochs=epochs,
                 batch_size=batch_size,
                 validation_data=validation_data,
-                sample_weight=sample_weights,
                 callbacks=callbacks,
                 verbose=0
             )
