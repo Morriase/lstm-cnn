@@ -236,23 +236,23 @@ class ProfitabilityClassifier:
             X_train = X_train.astype(np.float32)
             y_train = y_train.astype(np.float32)
             
-            # Handle NaN in labels using sample weights
-            # Create sample weights: 0 for NaN labels, 1 for valid
-            sample_weights = np.ones_like(y_train)
-            sample_weights[np.isnan(y_train)] = 0
+            # Filter out samples with any NaN in labels
+            # (simpler than sample weights for multi-output)
+            valid_mask = ~np.any(np.isnan(y_train), axis=1)
+            X_train = X_train[valid_mask]
+            y_train = y_train[valid_mask]
             
-            # Replace NaN with 0 for training (will be masked by weights)
-            y_train_clean = np.nan_to_num(y_train, nan=0.0)
+            logger.info(f"Training on {len(X_train)} samples (filtered NaN)")
             
             validation_data = None
             if X_val is not None and y_val is not None:
                 X_val = X_val.astype(np.float32)
                 y_val = y_val.astype(np.float32)
-                y_val_clean = np.nan_to_num(y_val, nan=0.0)
-                val_weights = np.ones_like(y_val)
-                val_weights[np.isnan(y_val)] = 0
-                validation_data = (X_val, y_val_clean, val_weights)
-                logger.info(f"Validation samples: {X_val.shape[0]}")
+                # Filter validation too
+                val_valid_mask = ~np.any(np.isnan(y_val), axis=1)
+                X_val = X_val[val_valid_mask]
+                y_val = y_val[val_valid_mask]
+                validation_data = (X_val, y_val)
             
             # Custom callback for progress
             class ProgressCallback(tf.keras.callbacks.Callback):
@@ -286,8 +286,7 @@ class ProfitabilityClassifier:
             ]
             
             history = self.model.fit(
-                X_train, y_train_clean,
-                sample_weight=sample_weights,
+                X_train, y_train,
                 epochs=epochs,
                 batch_size=batch_size,
                 validation_data=validation_data,
