@@ -1,13 +1,14 @@
 {
   "metrics": {
-    "rmse": 206.79094480027408,
-    "mae": 151.24983223886616,
-    "r2": -104.06375043324167,
-    "mape": 7.10744643869034
+    "rmse": 0.06921322643756866,
+    "mae": 0.055536895990371704,
+    "r2": 0.8696566224098206,
+    "mape": 6.0495452880859375,
+    "directional_accuracy": 49.42598187311179
   },
   "config": {
     "lookback_window": 30,
-    "target_column": "Target",
+    "target_column": null,
     "train_split": 0.8,
     "lstm_units": 50,
     "lstm_dropout": 0.2,
@@ -15,21 +16,27 @@
     "cnn_kernel_size": 3,
     "dense_units": 32,
     "learning_rate": 0.001,
-    "epochs": 10,
-    "batch_size": 32,
-    "early_stopping_patience": 3,
+    "epochs": 150,
+    "batch_size": 128,
+    "early_stopping_patience": 10,
     "cv_folds": 5,
     "use_cross_validation": false,
     "outlier_threshold": 3.0,
-    "output_dir": "../results",
-    "model_filename": "lstm_cnn_xauusd.onnx"
+    "output_dir": "/kaggle/working/results",
+    "model_filename": "lstm_cnn_xauusd.onnx",
+    "train_profitability_model": true,
+    "profitability_model_filename": "profitability_classifier.onnx",
+    "scalers_filename": "scalers.csv",
+    "long_outcome_column": "Long_Outcome",
+    "short_outcome_column": "Short_Outcome"
   },
   "evaluation_metrics": {
-    "rmse": 206.79094480027408,
-    "mae": 151.24983223886616,
-    "r2": -104.06375043324167,
-    "mape": 7.10744643869034
+    "rmse": 0.06921322643756866,
+    "mae": 0.055536895990371704,
+    "r2": 0.8696566224098206,
+    "mape": 6.0495452880859375,
+    "directional_accuracy": 49.42598187311179
   },
   "cv_results": null,
-  "timestamp": "2026-01-09T15:15:51.641279"
+  "timestamp": "2026-01-09T17:37:59.816525"
 }
