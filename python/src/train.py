@@ -12,14 +12,25 @@ This module orchestrates the complete training workflow:
 Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 10.1-10.7
 """
 
-import logging
 import os
+import sys
 import json
 from datetime import datetime
 from typing import Dict, Any, Optional, Tuple, List
 
 import numpy as np
 import pandas as pd
+
+from loguru import logger
+
+# Configure loguru
+logger.remove()
+logger.add(
+    sys.stderr,
+    format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>",
+    level="INFO",
+    colorize=True
+)
 
 from data_cleaner import DataCleaner, DataCleaningError
 from sequence_builder import SequenceBuilder, SequenceBuilderError
@@ -29,13 +40,6 @@ from metrics import (
     plot_loss_curves, plot_predictions,
     save_metrics_json, save_metrics_csv
 )
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 
 # Kaggle dataset path (hardcoded)

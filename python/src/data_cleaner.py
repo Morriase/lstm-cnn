@@ -9,14 +9,21 @@ This module handles data cleaning operations for the training pipeline:
 Requirements: 4.1.1, 4.1.2, 4.1.3, 4.1.4, 4.1.5, 4.1.6, 4.1.7
 """
 
-import logging
+import sys
 import pandas as pd
 import numpy as np
 from typing import Optional
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from loguru import logger
+
+# Configure loguru
+logger.remove()
+logger.add(
+    sys.stderr,
+    format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>",
+    level="INFO",
+    colorize=True
+)
 
 
 class DataCleaningError(Exception):

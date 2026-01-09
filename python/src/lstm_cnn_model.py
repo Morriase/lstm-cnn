@@ -11,15 +11,22 @@ This module implements the hybrid LSTM-CNN deep learning model for price forecas
 Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 7.1, 7.2, 7.3, 7.4, 7.5
 """
 
-import logging
 import os
+import sys
 from typing import Dict, Any, Optional, Tuple, List
 
 import numpy as np
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from loguru import logger
+
+# Configure loguru
+logger.remove()
+logger.add(
+    sys.stderr,
+    format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>",
+    level="INFO",
+    colorize=True
+)
 
 
 def setup_gpu():

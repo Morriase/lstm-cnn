@@ -3,23 +3,31 @@ Metrics Module for LSTM-CNN XAUUSD Trading System
 
 This module implements evaluation metrics and visualization for model performance:
 - RMSE, MAE, MAPE, R² metrics
+- Directional Accuracy for trading signals
 - Loss curves and prediction plots
 - Results saving to JSON/CSV
 
 Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7
 """
 
-import logging
 import json
 import os
+import sys
 from typing import Dict, Any, Optional, List, Union
 
 import numpy as np
 import pandas as pd
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from loguru import logger
+
+# Configure loguru
+logger.remove()
+logger.add(
+    sys.stderr,
+    format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>",
+    level="INFO",
+    colorize=True
+)
 
 
 class MetricsError(Exception):
@@ -28,23 +36,7 @@ class MetricsError(Exception):
 
 
 def compute_rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    """
-    Compute Root Mean Squared Error.
-    
-    RMSE = sqrt(mean((y - ŷ)²))
-    
-    Args:
-        y_true: Array of actual values
-        y_pred: Array of predicted values
-    
-    Returns:
-        RMSE value
-    
-    Raises:
-        MetricsError: If arrays have different lengths or are empty
-    
-    Requirements: 10.1
-    """
+    """Compute Root Mean Squared Error."""
     y_true = np.asarray(y_true).flatten()
     y_pred = np.asarray(y_pred).flatten()
     
@@ -54,156 +46,103 @@ def compute_rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     if len(y_true) == 0:
         raise MetricsError("Cannot compute RMSE on empty arrays")
     
-    squared_errors = (y_true - y_pred) ** 2
-    mse = np.mean(squared_errors)
-    rmse = np.sqrt(mse)
-    
-    return float(rmse)
+    mse = np.mean((y_true - y_pred) ** 2)
+    return float(np.sqrt(mse))
 
 
 def compute_mae(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    """
-    Compute Mean Absolute Error.
-    
-    MAE = mean(|y - ŷ|)
-    
-    Args:
-        y_true: Array of actual values
-        y_pred: Array of predicted values
-    
-    Returns:
-        MAE value
-    
-    Raises:
-        MetricsError: If arrays have different lengths or are empty
-    
-    Requirements: 10.2
-    """
+    """Compute Mean Absolute Error."""
     y_true = np.asarray(y_true).flatten()
     y_pred = np.asarray(y_pred).flatten()
     
     if len(y_true) != len(y_pred):
-        raise MetricsError(f"Array length mismatch: y_true={len(y_true)}, y_pred={len(y_pred)}")
+        raise MetricsError(f"Array length mismatch")
     
     if len(y_true) == 0:
         raise MetricsError("Cannot compute MAE on empty arrays")
     
-    absolute_errors = np.abs(y_true - y_pred)
-    mae = np.mean(absolute_errors)
-    
-    return float(mae)
+    return float(np.mean(np.abs(y_true - y_pred)))
 
 
 def compute_mape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    """
-    Compute Mean Absolute Percentage Error.
-    
-    MAPE = mean(|y - ŷ| / |y|) * 100
-    
-    Note: Values where y_true is zero are excluded from calculation
-    to avoid division by zero.
-    
-    Args:
-        y_true: Array of actual values
-        y_pred: Array of predicted values
-    
-    Returns:
-        MAPE value as percentage
-    
-    Raises:
-        MetricsError: If arrays have different lengths, are empty,
-                     or all y_true values are zero
-    
-    Requirements: 10.3
-    """
+    """Compute Mean Absolute Percentage Error."""
     y_true = np.asarray(y_true).flatten()
     y_pred = np.asarray(y_pred).flatten()
     
     if len(y_true) != len(y_pred):
-        raise MetricsError(f"Array length mismatch: y_true={len(y_true)}, y_pred={len(y_pred)}")
+        raise MetricsError(f"Array length mismatch")
     
     if len(y_true) == 0:
         raise MetricsError("Cannot compute MAPE on empty arrays")
     
-    # Exclude zero values to avoid division by zero
     non_zero_mask = y_true != 0
-    
     if not np.any(non_zero_mask):
         raise MetricsError("Cannot compute MAPE: all y_true values are zero")
     
     y_true_nz = y_true[non_zero_mask]
     y_pred_nz = y_pred[non_zero_mask]
     
-    percentage_errors = np.abs((y_true_nz - y_pred_nz) / np.abs(y_true_nz))
-    mape = np.mean(percentage_errors) * 100
-    
-    return float(mape)
+    return float(np.mean(np.abs((y_true_nz - y_pred_nz) / np.abs(y_true_nz))) * 100)
 
 
 def compute_r2(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    """
-    Compute R² (coefficient of determination) score.
-    
-    R² = 1 - (SS_res / SS_tot)
-    where:
-        SS_res = Σ(y - ŷ)² (residual sum of squares)
-        SS_tot = Σ(y - ȳ)² (total sum of squares)
-    
-    Args:
-        y_true: Array of actual values
-        y_pred: Array of predicted values
-    
-    Returns:
-        R² score (can be negative for poor models)
-    
-    Raises:
-        MetricsError: If arrays have different lengths, are empty,
-                     or y_true has zero variance
-    
-    Requirements: 10.4
-    """
+    """Compute R² (coefficient of determination) score."""
     y_true = np.asarray(y_true).flatten()
     y_pred = np.asarray(y_pred).flatten()
     
     if len(y_true) != len(y_pred):
-        raise MetricsError(f"Array length mismatch: y_true={len(y_true)}, y_pred={len(y_pred)}")
+        raise MetricsError(f"Array length mismatch")
     
     if len(y_true) == 0:
         raise MetricsError("Cannot compute R² on empty arrays")
     
-    # Calculate mean of y_true
     y_mean = np.mean(y_true)
-    
-    # Calculate SS_res (residual sum of squares)
     ss_res = np.sum((y_true - y_pred) ** 2)
-    
-    # Calculate SS_tot (total sum of squares)
     ss_tot = np.sum((y_true - y_mean) ** 2)
     
     if ss_tot == 0:
-        # All y_true values are the same (zero variance)
-        # If predictions are perfect, R² = 1, otherwise undefined
-        if ss_res == 0:
-            return 1.0
-        raise MetricsError("Cannot compute R²: y_true has zero variance")
+        return 1.0 if ss_res == 0 else 0.0
     
-    r2 = 1 - (ss_res / ss_tot)
-    
-    return float(r2)
+    return float(1 - (ss_res / ss_tot))
 
 
-def compute_all_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
+def compute_directional_accuracy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """
-    Compute all evaluation metrics.
+    Compute Directional Accuracy - percentage of correct direction predictions.
+    
+    This measures how often the model correctly predicts whether the price
+    will go up or down compared to the previous value.
     
     Args:
         y_true: Array of actual values
         y_pred: Array of predicted values
     
     Returns:
-        Dictionary with keys: 'rmse', 'mae', 'mape', 'r2'
+        Directional accuracy as percentage (0-100)
+    """
+    y_true = np.asarray(y_true).flatten()
+    y_pred = np.asarray(y_pred).flatten()
     
-    Requirements: 10.1, 10.2, 10.3, 10.4
+    if len(y_true) < 2:
+        raise MetricsError("Need at least 2 samples for directional accuracy")
+    
+    # Calculate actual and predicted directions
+    actual_direction = np.sign(np.diff(y_true))
+    pred_direction = np.sign(np.diff(y_pred))
+    
+    # Count correct predictions (same sign or both zero)
+    correct = np.sum(actual_direction == pred_direction)
+    total = len(actual_direction)
+    
+    return float(correct / total * 100)
+
+
+def compute_all_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
+    """
+    Compute all evaluation metrics including directional accuracy.
+    
+    Returns:
+        Dictionary with keys: 'rmse', 'mae', 'mape', 'r2', 'directional_accuracy'
     """
     metrics = {
         'rmse': compute_rmse(y_true, y_pred),
@@ -211,12 +150,15 @@ def compute_all_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, flo
         'r2': compute_r2(y_true, y_pred)
     }
     
-    # MAPE may fail if all y_true are zero
     try:
         metrics['mape'] = compute_mape(y_true, y_pred)
-    except MetricsError as e:
-        logger.warning(f"Could not compute MAPE: {e}")
+    except MetricsError:
         metrics['mape'] = None
+    
+    try:
+        metrics['directional_accuracy'] = compute_directional_accuracy(y_true, y_pred)
+    except MetricsError:
+        metrics['directional_accuracy'] = None
     
     return metrics
 

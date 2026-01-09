@@ -11,14 +11,21 @@ This module handles sequence creation for the LSTM-CNN model:
 Requirements: 5.1, 5.2, 5.4, 5.5, 5.6
 """
 
-import logging
+import sys
 import numpy as np
 import pandas as pd
 from typing import Tuple, Optional, Union
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from loguru import logger
+
+# Configure loguru
+logger.remove()
+logger.add(
+    sys.stderr,
+    format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>",
+    level="INFO",
+    colorize=True
+)
 
 
 class SequenceBuilderError(Exception):
