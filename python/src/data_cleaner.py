@@ -177,10 +177,13 @@ class DataCleaner:
         Run the complete cleaning pipeline.
         
         Pipeline sequence:
-        1. Optionally drop rows where forward fill cannot resolve NaN (start of dataset)
-        2. Forward fill remaining NaN values
-        3. Handle outliers using z-score capping
-        4. Validate no NaN values remain
+        1. Replace inf values with NaN
+        2. Optionally drop rows where forward fill cannot resolve NaN (start of dataset)
+        3. Forward fill remaining NaN values
+        4. Backward fill any remaining NaN at the start
+        5. Handle outliers using z-score capping
+        6. Drop any remaining rows with NaN
+        7. Validate no NaN values remain
         
         Args:
             df: Input DataFrame to clean
@@ -199,6 +202,12 @@ class DataCleaner:
         initial_rows = len(df)
         
         df_clean = df.copy()
+        
+        # Step 0: Replace inf/-inf with NaN
+        inf_count = np.isinf(df_clean.select_dtypes(include=[np.number])).sum().sum()
+        if inf_count > 0:
+            logger.info(f"Replacing {inf_count} inf values with NaN")
+            df_clean = df_clean.replace([np.inf, -np.inf], np.nan)
         
         # Step 1: Handle initial NaN values that cannot be forward-filled
         if drop_initial_nan:
@@ -220,10 +229,23 @@ class DataCleaner:
         # Step 2: Forward fill
         df_clean = self.forward_fill(df_clean)
         
-        # Step 3: Handle outliers
+        # Step 3: Backward fill any remaining NaN at the start
+        nan_before_bfill = df_clean.isna().sum().sum()
+        if nan_before_bfill > 0:
+            df_clean = df_clean.bfill()
+            nan_after_bfill = df_clean.isna().sum().sum()
+            logger.info(f"Backward fill: {nan_before_bfill - nan_after_bfill} NaN values filled")
+        
+        # Step 4: Handle outliers
         df_clean = self.handle_outliers(df_clean)
         
-        # Step 4: Validate
+        # Step 5: Drop any remaining rows with NaN (last resort)
+        nan_rows = df_clean.isna().any(axis=1).sum()
+        if nan_rows > 0:
+            logger.warning(f"Dropping {nan_rows} rows with remaining NaN values")
+            df_clean = df_clean.dropna()
+        
+        # Step 6: Validate
         self.validate_no_nan(df_clean)
         
         final_rows = len(df_clean)

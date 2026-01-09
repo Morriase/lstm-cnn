@@ -6,6 +6,7 @@ This module handles sequence creation for the LSTM-CNN model:
 - Structures data as [samples, timesteps, features]
 - Aligns targets with sequences for next-bar prediction
 - Prevents data leakage by ensuring no future data in inputs
+- Normalizes features using min-max scaling
 
 Requirements: 5.1, 5.2, 5.4, 5.5, 5.6
 """
@@ -35,6 +36,10 @@ class SequenceBuilder:
     
     Attributes:
         lookback: Number of historical bars in each sequence (default: 30)
+        feature_min: Min values for each feature (for denormalization)
+        feature_max: Max values for each feature (for denormalization)
+        target_min: Min value for target (for denormalization)
+        target_max: Max value for target (for denormalization)
     """
     
     def __init__(self, lookback: int = 30):
@@ -54,6 +59,10 @@ class SequenceBuilder:
             raise ValueError(f"lookback must be a positive integer, got {lookback}")
         
         self.lookback = lookback
+        self.feature_min = None
+        self.feature_max = None
+        self.target_min = None
+        self.target_max = None
         logger.info(f"SequenceBuilder initialized with lookback={lookback}")
 
 
@@ -61,7 +70,8 @@ class SequenceBuilder:
         self, 
         data: Union[pd.DataFrame, np.ndarray],
         target_column: Optional[str] = None,
-        target_array: Optional[np.ndarray] = None
+        target_array: Optional[np.ndarray] = None,
+        normalize: bool = True
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
         Create sliding window sequences for LSTM-CNN training.
@@ -82,6 +92,7 @@ class SequenceBuilder:
                           If None and target_array is None, uses last column.
             target_array: Explicit target values as 1D array. If provided,
                          this is used instead of extracting from data.
+            normalize: If True, apply min-max normalization to features and target.
         
         Returns:
             Tuple of (X, y) where:
@@ -103,27 +114,27 @@ class SequenceBuilder:
                 if target_column is not None:
                     if target_column not in data.columns:
                         raise ValueError(f"Target column '{target_column}' not found in data")
-                    targets = data[target_column].values
-                    features = data.drop(columns=[target_column]).values
+                    targets = data[target_column].values.astype(np.float64)
+                    features = data.drop(columns=[target_column]).values.astype(np.float64)
                 else:
                     # Use last column as target
-                    targets = data.iloc[:, -1].values
-                    features = data.iloc[:, :-1].values
+                    targets = data.iloc[:, -1].values.astype(np.float64)
+                    features = data.iloc[:, :-1].values.astype(np.float64)
             else:
-                targets = target_array
-                features = data.values
+                targets = target_array.astype(np.float64)
+                features = data.values.astype(np.float64)
         else:
             # Numpy array input
-            features = np.asarray(data)
+            features = np.asarray(data, dtype=np.float64)
             if features.ndim != 2:
                 raise ValueError(f"Data must be 2D, got shape {features.shape}")
             
             if target_array is None:
                 # Use last column as target
-                targets = features[:, -1]
-                features = features[:, :-1]
+                targets = features[:, -1].copy()
+                features = features[:, :-1].copy()
             else:
-                targets = np.asarray(target_array)
+                targets = np.asarray(target_array, dtype=np.float64)
         
         # Validate dimensions
         n_samples, n_features = features.shape
@@ -132,6 +143,27 @@ class SequenceBuilder:
             raise ValueError(
                 f"Target length ({len(targets)}) must match data length ({n_samples})"
             )
+        
+        # Normalize features and targets (min-max scaling to [0, 1])
+        if normalize:
+            # Store min/max for denormalization later
+            self.feature_min = features.min(axis=0)
+            self.feature_max = features.max(axis=0)
+            self.target_min = targets.min()
+            self.target_max = targets.max()
+            
+            # Avoid division by zero
+            feature_range = self.feature_max - self.feature_min
+            feature_range[feature_range == 0] = 1.0
+            target_range = self.target_max - self.target_min
+            if target_range == 0:
+                target_range = 1.0
+            
+            features = (features - self.feature_min) / feature_range
+            targets = (targets - self.target_min) / target_range
+            
+            logger.info(f"Normalized features to [0, 1] range")
+            logger.info(f"Target range: [{self.target_min:.2f}, {self.target_max:.2f}]")
         
         # Check if we have enough data
         # We need at least lookback + 1 samples to create one sequence
@@ -155,8 +187,8 @@ class SequenceBuilder:
         )
         
         # Pre-allocate arrays for efficiency
-        X = np.zeros((n_sequences, self.lookback, n_features), dtype=np.float64)
-        y = np.zeros((n_sequences, 1), dtype=np.float64)
+        X = np.zeros((n_sequences, self.lookback, n_features), dtype=np.float32)
+        y = np.zeros((n_sequences, 1), dtype=np.float32)
         
         # Create sequences using sliding window
         for i in range(n_sequences):
@@ -166,6 +198,7 @@ class SequenceBuilder:
             y[i, 0] = targets[i + self.lookback]
         
         logger.info(f"Created sequences: X shape={X.shape}, y shape={y.shape}")
+        logger.info(f"X range: [{X.min():.4f}, {X.max():.4f}], y range: [{y.min():.4f}, {y.max():.4f}]")
         
         return X, y
 
