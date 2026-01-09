@@ -246,7 +246,32 @@ class ProfitabilityClassifier:
             y_long = y_train[:, 0:1]  # Keep as 2D [samples, 1]
             y_short = y_train[:, 1:2]
             
+            # Compute class weights to handle imbalance
+            # This makes the model pay more attention to the minority class (wins)
+            long_pos = np.sum(y_long == 1)
+            long_neg = np.sum(y_long == 0)
+            short_pos = np.sum(y_short == 1)
+            short_neg = np.sum(y_short == 0)
+            
+            # Weight = total / (2 * class_count) - higher weight for minority
+            long_weight_0 = len(y_long) / (2 * long_neg) if long_neg > 0 else 1.0
+            long_weight_1 = len(y_long) / (2 * long_pos) if long_pos > 0 else 1.0
+            short_weight_0 = len(y_short) / (2 * short_neg) if short_neg > 0 else 1.0
+            short_weight_1 = len(y_short) / (2 * short_pos) if short_pos > 0 else 1.0
+            
             logger.info(f"Training on {len(X_train)} samples (filtered NaN)")
+            logger.info(f"Long class balance: {long_pos} wins / {long_neg} losses ({100*long_pos/(long_pos+long_neg):.1f}% win rate)")
+            logger.info(f"Short class balance: {short_pos} wins / {short_neg} losses ({100*short_pos/(short_pos+short_neg):.1f}% win rate)")
+            logger.info(f"Class weights - Long: {{0: {long_weight_0:.2f}, 1: {long_weight_1:.2f}}}")
+            logger.info(f"Class weights - Short: {{0: {short_weight_0:.2f}, 1: {short_weight_1:.2f}}}")
+            
+            # Create sample weights (average of long and short weights for each sample)
+            sample_weights = np.zeros(len(y_train))
+            for i in range(len(y_train)):
+                lw = long_weight_1 if y_long[i, 0] == 1 else long_weight_0
+                sw = short_weight_1 if y_short[i, 0] == 1 else short_weight_0
+                sample_weights[i] = (lw + sw) / 2
+            
             
             validation_data = None
             if X_val is not None and y_val is not None:
@@ -298,6 +323,7 @@ class ProfitabilityClassifier:
                 epochs=epochs,
                 batch_size=batch_size,
                 validation_data=validation_data,
+                sample_weight=sample_weights,
                 callbacks=callbacks,
                 verbose=0
             )

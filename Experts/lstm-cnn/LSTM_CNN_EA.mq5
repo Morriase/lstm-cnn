@@ -28,7 +28,7 @@
 input group "=== Model Settings ==="
 input int    InpLookback = 30;                    // Lookback Window (bars)
 input double InpMagnitudeThreshold = 0.5;         // Magnitude Threshold (ATR multiplier)
-input double InpProfitThreshold = 0.55;           // Profitability Threshold (0.5-1.0)
+input double InpProfitThreshold = 0.40;           // Profitability Threshold (0.5-1.0)
 
 input group "=== Trade Management ==="
 input ulong  InpMagicNumber = 20250109;           // Magic Number
@@ -56,18 +56,10 @@ input group "=== Display Settings ==="
 input bool   InpShowDisplay = true;               // Show Chart Display
 
 //+------------------------------------------------------------------+
-//| Feature indices matching training data                            |
+//| Feature indices matching training data (6 features after pruning) |
 //+------------------------------------------------------------------+
 #define NUM_FEATURES 6
-enum ENUM_FEATURE_IDX
-{
-   FEAT_VOLUME = 0,
-   FEAT_BB_UPPER = 1,
-   FEAT_RSI = 2,
-   FEAT_MACD = 3,
-   FEAT_MACD_HISTOGRAM = 4,
-   FEAT_OBV = 5
-};
+// Training feature order: Volume(0), BB_Upper(1), RSI(2), MACD(3), MACD_Histogram(4), OBV(5)
 
 //+------------------------------------------------------------------+
 //| Global Variables                                                  |
@@ -111,9 +103,6 @@ bool LoadScalers()
       return false;
    }
    
-   // Feature name to index mapping
-   string feature_names[] = {"Volume", "BB_Upper", "RSI", "MACD", "MACD_Histogram", "OBV", "Target"};
-   
    for(int i = 1; i < line_count; i++)  // Skip header
    {
       string parts[];
@@ -128,36 +117,36 @@ bool LoadScalers()
       double min_val = StringToDouble(parts[1]);
       double max_val = StringToDouble(parts[2]);
       
-      // Match feature name to index
+      // Match feature name to index (training order)
       if(name == "Volume")
       {
-         g_feature_min[FEAT_VOLUME] = min_val;
-         g_feature_max[FEAT_VOLUME] = max_val;
+         g_feature_min[0] = min_val;
+         g_feature_max[0] = max_val;
       }
       else if(name == "BB_Upper")
       {
-         g_feature_min[FEAT_BB_UPPER] = min_val;
-         g_feature_max[FEAT_BB_UPPER] = max_val;
+         g_feature_min[1] = min_val;
+         g_feature_max[1] = max_val;
       }
       else if(name == "RSI")
       {
-         g_feature_min[FEAT_RSI] = min_val;
-         g_feature_max[FEAT_RSI] = max_val;
+         g_feature_min[2] = min_val;
+         g_feature_max[2] = max_val;
       }
       else if(name == "MACD")
       {
-         g_feature_min[FEAT_MACD] = min_val;
-         g_feature_max[FEAT_MACD] = max_val;
+         g_feature_min[3] = min_val;
+         g_feature_max[3] = max_val;
       }
       else if(name == "MACD_Histogram")
       {
-         g_feature_min[FEAT_MACD_HISTOGRAM] = min_val;
-         g_feature_max[FEAT_MACD_HISTOGRAM] = max_val;
+         g_feature_min[4] = min_val;
+         g_feature_max[4] = max_val;
       }
       else if(name == "OBV")
       {
-         g_feature_min[FEAT_OBV] = min_val;
-         g_feature_max[FEAT_OBV] = max_val;
+         g_feature_min[5] = min_val;
+         g_feature_max[5] = max_val;
       }
       else if(name == "Target")
       {
@@ -442,13 +431,14 @@ bool BuildInputSequence(float &input_data[])
          IndicatorRelease(obv_handle);
       }
       
-      // Normalize and store
-      input_data[offset + FEAT_VOLUME] = (float)NormalizeFeature(volume, FEAT_VOLUME);
-      input_data[offset + FEAT_BB_UPPER] = (float)NormalizeFeature(bb_upper, FEAT_BB_UPPER);
-      input_data[offset + FEAT_RSI] = (float)NormalizeFeature(rsi, FEAT_RSI);
-      input_data[offset + FEAT_MACD] = (float)NormalizeFeature(macd, FEAT_MACD);
-      input_data[offset + FEAT_MACD_HISTOGRAM] = (float)NormalizeFeature(macd_hist, FEAT_MACD_HISTOGRAM);
-      input_data[offset + FEAT_OBV] = (float)NormalizeFeature(obv, FEAT_OBV);
+      // Normalize and store using training feature order (0-5)
+      // Training order: Volume(0), BB_Upper(1), RSI(2), MACD(3), MACD_Histogram(4), OBV(5)
+      input_data[offset + 0] = (float)NormalizeFeature(volume, 0);
+      input_data[offset + 1] = (float)NormalizeFeature(bb_upper, 1);
+      input_data[offset + 2] = (float)NormalizeFeature(rsi, 2);
+      input_data[offset + 3] = (float)NormalizeFeature(macd, 3);
+      input_data[offset + 4] = (float)NormalizeFeature(macd_hist, 4);
+      input_data[offset + 5] = (float)NormalizeFeature(obv, 5);
    }
    
    return true;
