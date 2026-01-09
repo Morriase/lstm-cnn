@@ -16,9 +16,14 @@ import sys
 import warnings
 from typing import Dict, Any, Optional, Tuple, List
 
-# Silence warnings
+# Silence all warnings and TensorFlow logs BEFORE importing TF
 warnings.filterwarnings('ignore')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+
+import logging
+logging.getLogger('tensorflow').setLevel(logging.ERROR)
+logging.getLogger('absl').setLevel(logging.ERROR)
 
 import numpy as np
 
