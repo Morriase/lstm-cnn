@@ -23,6 +23,10 @@ from typing import Dict, Any, Optional, Tuple, List
 warnings.filterwarnings('ignore')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
+import logging
+logging.getLogger('tensorflow').setLevel(logging.CRITICAL)
+logging.getLogger('absl').setLevel(logging.CRITICAL)
+
 import numpy as np
 import pandas as pd
 
@@ -609,57 +613,66 @@ class TrainingPipeline:
         
         Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 10.1-10.7
         """
-        logger.info("=" * 60)
-        logger.info("Starting full training pipeline")
-        logger.info("=" * 60)
-        
-        # Log hyperparameters
-        self.log_hyperparameters()
+        print("\n" + "=" * 60)
+        print("LSTM-CNN XAUUSD DUAL-MODEL TRAINING PIPELINE")
+        print("=" * 60)
         
         # Step 1: Load data
+        print("\n[1/8] Loading data...")
         self.load_data(csv_path)
         
         # Step 2: Clean data
+        print("[2/8] Cleaning data...")
         self.clean_data_step()
         
         # Step 3: Split train/test by date
+        print("[3/8] Splitting train/test...")
         train_df, test_df, _, _ = self.split_train_test_by_date()
         
         # Step 4: Build sequences
+        print("[4/8] Building sequences...")
         self.build_sequences(train_df, test_df)
         
         # Step 5: Cross-validation (optional)
         if self.config['use_cross_validation']:
-            self.cross_validate(verbose=verbose)
+            print("[5/8] Cross-validation...")
+            self.cross_validate(verbose=0)
         
-        # Step 6: Train final price predictor model on full training set
-        logger.info("=" * 50)
-        logger.info("Training Price Predictor Model")
-        logger.info("=" * 50)
+        # Step 6: Train price predictor
+        print("\n" + "-" * 60)
+        print("MODEL 1: PRICE PREDICTOR (LSTM-CNN)")
+        print("-" * 60)
+        print(f"Training on {len(self.X_train)} samples...")
         self.build_model()
-        self.train_model(verbose=verbose)
+        self.train_model(X_val=self.X_test, y_val=self.y_test, verbose=0)
         
-        # Step 7: Train profitability classifier (if enabled and data available)
+        # Step 7: Train profitability classifier
         profitability_onnx_path = None
-        if self.config.get('train_profitability_model', True):
-            self.train_profitability_model(verbose=verbose)
+        if self.config.get('train_profitability_model', True) and self.long_outcomes_train is not None:
+            print("\n" + "-" * 60)
+            print("MODEL 2: PROFITABILITY CLASSIFIER (CNN)")
+            print("-" * 60)
+            
+            # Count valid samples
+            long_valid = np.sum(self.long_outcomes_train >= 0)
+            short_valid = np.sum(self.short_outcomes_train >= 0)
+            print(f"Training on {long_valid} long + {short_valid} short labeled samples...")
+            
+            self.train_profitability_model(verbose=0)
         
-        # Step 8: Evaluate on test set
+        # Step 8: Evaluate and export
+        print("\n" + "-" * 60)
+        print("EVALUATION & EXPORT")
+        print("-" * 60)
+        
         self.evaluate()
-        
-        # Step 9: Generate plots
         plots = self.generate_plots()
-        
-        # Step 10: Export ONNX models
         onnx_path = self.export_onnx()
         
         if self.profitability_model is not None:
             profitability_onnx_path = self.export_profitability_onnx()
         
-        # Step 11: Export scalers
         scalers_path = self.export_scalers()
-        
-        # Step 12: Save results
         saved_files = self.save_results()
         
         results = {
@@ -672,14 +685,14 @@ class TrainingPipeline:
             'saved_files': saved_files,
         }
         
-        logger.info("=" * 60)
-        logger.info("Training pipeline complete!")
-        logger.info(f"Price predictor ONNX: {onnx_path}")
+        print("\n" + "=" * 60)
+        print("TRAINING COMPLETE")
+        print("=" * 60)
+        print(f"Price predictor:    {onnx_path}")
         if profitability_onnx_path:
-            logger.info(f"Profitability classifier ONNX: {profitability_onnx_path}")
-        logger.info(f"Scalers CSV: {scalers_path}")
-        logger.info(f"Results saved to: {self.config['output_dir']}")
-        logger.info("=" * 60)
+            print(f"Profitability model: {profitability_onnx_path}")
+        print(f"Scalers:            {scalers_path}")
+        print("=" * 60 + "\n")
         
         return results
 

@@ -23,17 +23,12 @@ from typing import Dict, Any, Optional, Tuple, List
 warnings.filterwarnings('ignore')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
+import logging
+logging.getLogger('tensorflow').setLevel(logging.CRITICAL)
+
 import numpy as np
 
 from loguru import logger
-
-logger.remove()
-logger.add(
-    sys.stderr,
-    format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>",
-    level="INFO",
-    colorize=True
-)
 
 
 class ProfitabilityModelError(Exception):
@@ -276,8 +271,7 @@ class ProfitabilityClassifier:
                         acc = logs.get('accuracy', 0) * 100
                         val_loss = logs.get('val_loss', 0)
                         val_acc = logs.get('val_accuracy', 0) * 100
-                        print(f"Epoch {epoch+1:3d} | loss: {loss:.4f} | acc: {acc:.1f}% | "
-                              f"val_loss: {val_loss:.4f} | val_acc: {val_acc:.1f}%")
+                        print(f"  [Profit] Epoch {epoch+1:3d} | BCE: {loss:.4f} | val_BCE: {val_loss:.4f} | acc: {acc:.1f}% | val_acc: {val_acc:.1f}%")
             
             callbacks = [
                 ProgressCallback(print_every=10),

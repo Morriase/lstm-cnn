@@ -20,23 +20,26 @@ from typing import Dict, Any, Optional, Tuple, List
 warnings.filterwarnings('ignore')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
 
 import logging
-logging.getLogger('tensorflow').setLevel(logging.ERROR)
-logging.getLogger('absl').setLevel(logging.ERROR)
+logging.getLogger('tensorflow').setLevel(logging.CRITICAL)
+logging.getLogger('absl').setLevel(logging.CRITICAL)
+logging.getLogger('h5py').setLevel(logging.CRITICAL)
 
 import numpy as np
 
 from loguru import logger
 
-# Configure loguru
-logger.remove()
-logger.add(
-    sys.stderr,
-    format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>",
-    level="INFO",
-    colorize=True
-)
+# Configure loguru - only if not already configured
+if not logger._core.handlers:
+    logger.remove()
+    logger.add(
+        sys.stderr,
+        format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>",
+        level="INFO",
+        colorize=True
+    )
 
 
 def setup_gpu():
@@ -47,32 +50,29 @@ def setup_gpu():
     try:
         import tensorflow as tf
         
+        # Suppress TF logging
+        tf.get_logger().setLevel('ERROR')
+        
         # List available GPUs
         gpus = tf.config.list_physical_devices('GPU')
         
         if gpus:
-            logger.info(f"Found {len(gpus)} GPU(s): {[gpu.name for gpu in gpus]}")
+            logger.info(f"Found {len(gpus)} GPU(s)")
             
             # Enable memory growth to avoid OOM
             for gpu in gpus:
                 try:
                     tf.config.experimental.set_memory_growth(gpu, True)
-                    logger.info(f"Memory growth enabled for {gpu.name}")
-                except RuntimeError as e:
-                    logger.warning(f"Could not set memory growth for {gpu.name}: {e}")
+                except RuntimeError:
+                    pass
             
             # Use MirroredStrategy for multi-GPU training
             if len(gpus) > 1:
                 strategy = tf.distribute.MirroredStrategy()
                 logger.info(f"Using MirroredStrategy with {strategy.num_replicas_in_sync} GPUs")
             else:
-                strategy = tf.distribute.get_strategy()  # Default strategy
+                strategy = tf.distribute.get_strategy()
                 logger.info("Using single GPU")
-            
-            # Log GPU details
-            for gpu in gpus:
-                details = tf.config.experimental.get_device_details(gpu)
-                logger.info(f"GPU: {gpu.name}, Details: {details}")
         else:
             logger.warning("No GPUs found, using CPU")
             strategy = tf.distribute.get_strategy()
@@ -396,6 +396,8 @@ class LSTMCNNModel:
                     if (epoch + 1) % self.print_every == 0 or epoch == 0:
                         loss = logs.get('loss', 0)
                         val_loss = logs.get('val_loss', 0)
+                        mae = logs.get('mae', 0)
+                        val_mae = logs.get('val_mae', 0)
                         
                         # Calculate directional accuracy
                         dir_acc = 0
@@ -406,7 +408,7 @@ class LSTMCNNModel:
                                 pred_dir = np.sign(np.diff(y_pred.flatten()))
                                 dir_acc = np.mean(actual_dir == pred_dir) * 100
                         
-                        print(f"Epoch {epoch+1:3d} | loss: {loss:.4f} | val_loss: {val_loss:.4f} | dir_acc: {dir_acc:.1f}%")
+                        print(f"  [Price] Epoch {epoch+1:3d} | MSE: {loss:.6f} | val_MSE: {val_loss:.6f} | MAE: {mae:.4f} | dir_acc: {dir_acc:.1f}%")
             
             # Callbacks
             callbacks = []
