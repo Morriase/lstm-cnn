@@ -47,7 +47,7 @@ DEFAULT_PROFITABILITY_CONFIG = {
     'learning_rate': 0.0005,
     'epochs': 100,            # Reduced - early stopping will handle it
     'batch_size': 256,        # Larger batch for more stable gradients
-    'early_stopping_patience': 15,
+    'early_stopping_patience': 20,  # Give it more time to find good weights
     'l2_reg': 0.01,           # L2 regularization
 }
 
@@ -272,35 +272,24 @@ class ProfitabilityClassifier:
             logger.info(f"Long class balance: {long_pos} wins / {long_neg} losses ({100*long_pos/(long_pos+long_neg):.1f}% win rate)")
             logger.info(f"Short class balance: {short_pos} wins / {short_neg} losses ({100*short_pos/(short_pos+short_neg):.1f}% win rate)")
             
-            # Oversample minority class (wins) to balance the dataset
-            # Simple approach: oversample wins for BOTH long and short together
-            long_win_idx = np.where(y_long[:, 0] == 1)[0]
-            long_loss_idx = np.where(y_long[:, 0] == 0)[0]
-            short_win_idx = np.where(y_short[:, 0] == 1)[0]
-            short_loss_idx = np.where(y_short[:, 0] == 0)[0]
+            # Use class weights instead of oversampling for multi-output model
+            # This is cleaner and doesn't duplicate data
+            # Weight formula: total / (2 * class_count) gives higher weight to minority class
+            class_weight_long = {0: long_weight_0, 1: long_weight_1}
+            class_weight_short = {0: short_weight_0, 1: short_weight_1}
             
-            # Find samples that are wins for EITHER long or short
-            # These are the "good" samples we want more of
-            either_win = (y_long[:, 0] == 1) | (y_short[:, 0] == 1)
-            win_idx = np.where(either_win)[0]
-            loss_idx = np.where(~either_win)[0]
+            logger.info(f"Long class weights: loss={long_weight_0:.2f}, win={long_weight_1:.2f}")
+            logger.info(f"Short class weights: loss={short_weight_0:.2f}, win={short_weight_1:.2f}")
             
-            logger.info(f"Samples with at least one win: {len(win_idx)}, both losses: {len(loss_idx)}")
+            # Create sample weights that combine both outputs
+            # For each sample, use the max weight from either output
+            sample_weights = np.ones(len(X_train), dtype=np.float32)
+            for i in range(len(X_train)):
+                long_w = long_weight_1 if y_long[i, 0] == 1 else long_weight_0
+                short_w = short_weight_1 if y_short[i, 0] == 1 else short_weight_0
+                sample_weights[i] = max(long_w, short_w)
             
-            # Oversample win samples to balance - FIX: actually apply oversampling
-            if len(win_idx) < len(loss_idx):
-                oversample_count = len(loss_idx) - len(win_idx)
-                oversampled_idx = np.random.choice(win_idx, size=oversample_count, replace=True)
-                all_idx = np.concatenate([np.arange(len(X_train)), oversampled_idx])
-                np.random.shuffle(all_idx)  # Shuffle to mix oversampled data
-                X_train = X_train[all_idx]
-                y_long = y_long[all_idx]
-                y_short = y_short[all_idx]
-                logger.info(f"Oversampled {oversample_count} win samples, new total: {len(X_train)}")
-            
-            # Log final balance after oversampling
-            logger.info(f"Final long balance: {np.sum(y_long == 1)} wins / {np.sum(y_long == 0)} losses")
-            logger.info(f"Final short balance: {np.sum(y_short == 1)} wins / {np.sum(y_short == 0)} losses")
+            logger.info(f"Sample weights range: [{sample_weights.min():.2f}, {sample_weights.max():.2f}]")
             
             
             validation_data = None
@@ -353,6 +342,7 @@ class ProfitabilityClassifier:
                 epochs=epochs,
                 batch_size=batch_size,
                 validation_data=validation_data,
+                sample_weight=sample_weights,  # Apply class balancing via sample weights
                 callbacks=callbacks,
                 verbose=0
             )
