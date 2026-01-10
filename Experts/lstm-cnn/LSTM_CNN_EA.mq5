@@ -28,7 +28,7 @@
 input group "=== Model Settings ==="
 input int    InpLookback = 30;                    // Lookback Window (bars)
 input double InpMagnitudeThreshold = 0.5;         // Magnitude Threshold (ATR multiplier)
-input double InpProfitThreshold = 0.40;           // Profitability Threshold (0.5-1.0)
+input double InpProfitThreshold = 0.45;           // Profitability Threshold (0.5-1.0)
 
 input group "=== Trade Management ==="
 input ulong  InpMagicNumber = 20250109;           // Magic Number
