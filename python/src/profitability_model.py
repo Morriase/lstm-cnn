@@ -291,6 +291,12 @@ class ProfitabilityClassifier:
             
             logger.info(f"Sample weights range: [{sample_weights.min():.2f}, {sample_weights.max():.2f}]")
             
+            # For multi-output models, sample_weight needs to be a dict
+            sample_weight_dict = {
+                'long_output': sample_weights,
+                'short_output': sample_weights
+            }
+            
             
             validation_data = None
             if X_val is not None and y_val is not None:
@@ -342,7 +348,7 @@ class ProfitabilityClassifier:
                 epochs=epochs,
                 batch_size=batch_size,
                 validation_data=validation_data,
-                sample_weight=sample_weights,  # Apply class balancing via sample weights
+                sample_weight=sample_weight_dict,  # Apply class balancing via sample weights
                 callbacks=callbacks,
                 verbose=0
             )
