@@ -39,15 +39,16 @@ class ProfitabilityModelError(Exception):
 DEFAULT_PROFITABILITY_CONFIG = {
     'lookback': 30,
     'num_features': 6,
-    'conv1_filters': 64,      # Increased from 32
-    'conv2_filters': 32,      # Increased from 16
+    'conv1_filters': 32,      # Reduced to prevent overfitting
+    'conv2_filters': 16,      # Reduced to prevent overfitting
     'kernel_size': 3,
-    'dense_units': 32,        # Increased from 16
-    'dropout_rate': 0.3,      # Increased from 0.2
-    'learning_rate': 0.0005,  # Reduced from 0.001
-    'epochs': 200,            # Increased from 100
-    'batch_size': 128,        # Increased from 64
-    'early_stopping_patience': 25,  # Increased from 10
+    'dense_units': 16,        # Reduced to prevent overfitting
+    'dropout_rate': 0.5,      # Increased significantly for regularization
+    'learning_rate': 0.0005,
+    'epochs': 100,            # Reduced - early stopping will handle it
+    'batch_size': 256,        # Larger batch for more stable gradients
+    'early_stopping_patience': 15,
+    'l2_reg': 0.01,           # L2 regularization
 }
 
 
@@ -90,9 +91,10 @@ class ProfitabilityClassifier:
             from tensorflow.keras.models import Model
             from tensorflow.keras.layers import (
                 Input, Conv1D, Dense, Dropout,
-                MaxPooling1D, GlobalMaxPooling1D
+                MaxPooling1D, GlobalMaxPooling1D, BatchNormalization
             )
             from tensorflow.keras.optimizers import Adam
+            from tensorflow.keras.regularizers import l2
         except ImportError as e:
             raise ProfitabilityModelError(f"TensorFlow not installed: {e}")
         
@@ -105,22 +107,29 @@ class ProfitabilityClassifier:
             dense_units = self.config['dense_units']
             dropout_rate = self.config['dropout_rate']
             learning_rate = self.config['learning_rate']
+            l2_reg = self.config.get('l2_reg', 0.01)
             
             # Input layer
             inputs = Input(shape=(lookback, num_features), name='input')
             
-            # First Conv block
+            # First Conv block with L2 regularization
             x = Conv1D(conv1_filters, kernel_size, activation='relu', 
-                      padding='same', name='conv1')(inputs)
+                      padding='same', name='conv1',
+                      kernel_regularizer=l2(l2_reg))(inputs)
+            x = BatchNormalization(name='bn1')(x)
             x = MaxPooling1D(pool_size=2, name='maxpool1')(x)
+            x = Dropout(dropout_rate / 2, name='dropout1')(x)  # Light dropout after conv
             
-            # Second Conv block
+            # Second Conv block with L2 regularization
             x = Conv1D(conv2_filters, kernel_size, activation='relu',
-                      padding='same', name='conv2')(x)
+                      padding='same', name='conv2',
+                      kernel_regularizer=l2(l2_reg))(x)
+            x = BatchNormalization(name='bn2')(x)
             x = GlobalMaxPooling1D(name='global_maxpool')(x)
             
-            # Dense layers
-            x = Dense(dense_units, activation='relu', name='dense1')(x)
+            # Dense layers with strong regularization
+            x = Dense(dense_units, activation='relu', name='dense1',
+                     kernel_regularizer=l2(l2_reg))(x)
             x = Dropout(dropout_rate, name='dropout')(x)
             
             # Two separate output heads for independent binary classification
@@ -278,17 +287,18 @@ class ProfitabilityClassifier:
             
             logger.info(f"Samples with at least one win: {len(win_idx)}, both losses: {len(loss_idx)}")
             
-            # Oversample win samples to balance
+            # Oversample win samples to balance - FIX: actually apply oversampling
             if len(win_idx) < len(loss_idx):
                 oversample_count = len(loss_idx) - len(win_idx)
                 oversampled_idx = np.random.choice(win_idx, size=oversample_count, replace=True)
                 all_idx = np.concatenate([np.arange(len(X_train)), oversampled_idx])
+                np.random.shuffle(all_idx)  # Shuffle to mix oversampled data
                 X_train = X_train[all_idx]
                 y_long = y_long[all_idx]
                 y_short = y_short[all_idx]
                 logger.info(f"Oversampled {oversample_count} win samples, new total: {len(X_train)}")
             
-            # Log final balance
+            # Log final balance after oversampling
             logger.info(f"Final long balance: {np.sum(y_long == 1)} wins / {np.sum(y_long == 0)} losses")
             logger.info(f"Final short balance: {np.sum(y_short == 1)} wins / {np.sum(y_short == 0)} losses")
             
@@ -324,13 +334,13 @@ class ProfitabilityClassifier:
             callbacks = [
                 ProgressCallback(print_every=10),
                 EarlyStopping(
-                    monitor='loss',  # Monitor training loss, not val_loss (val is imbalanced)
+                    monitor='val_loss',  # Monitor validation loss to prevent overfitting
                     patience=patience,
                     restore_best_weights=True,
                     verbose=0
                 ),
                 ReduceLROnPlateau(
-                    monitor='loss',
+                    monitor='val_loss',
                     factor=0.5,
                     patience=patience // 2,
                     min_lr=1e-6,
@@ -454,8 +464,10 @@ class ProfitabilityClassifier:
                 
                 # Conv layers (input: [batch, features, lookback] in PyTorch)
                 self.conv1 = nn.Conv1d(num_features, conv1_filters, kernel_size, padding='same')
+                self.bn1 = nn.BatchNorm1d(conv1_filters)
                 self.maxpool1 = nn.MaxPool1d(2)
                 self.conv2 = nn.Conv1d(conv1_filters, conv2_filters, kernel_size, padding='same')
+                self.bn2 = nn.BatchNorm1d(conv2_filters)
                 self.global_maxpool = nn.AdaptiveMaxPool1d(1)
                 
                 # Dense layers
@@ -473,9 +485,9 @@ class ProfitabilityClassifier:
                 # x: [batch, lookback, features] -> [batch, features, lookback]
                 x = x.permute(0, 2, 1)
                 
-                x = self.relu(self.conv1(x))
+                x = self.relu(self.bn1(self.conv1(x)))
                 x = self.maxpool1(x)
-                x = self.relu(self.conv2(x))
+                x = self.relu(self.bn2(self.conv2(x)))
                 x = self.global_maxpool(x).squeeze(-1)
                 
                 x = self.relu(self.dense1(x))
@@ -504,6 +516,14 @@ class ProfitabilityClassifier:
             )
             pytorch_model.conv1.bias.data = torch.tensor(bias, dtype=torch.float32)
         
+        # BatchNorm1
+        if 'bn1' in keras_weights and len(keras_weights['bn1']) >= 4:
+            gamma, beta, moving_mean, moving_var = keras_weights['bn1'][:4]
+            pytorch_model.bn1.weight.data = torch.tensor(gamma, dtype=torch.float32)
+            pytorch_model.bn1.bias.data = torch.tensor(beta, dtype=torch.float32)
+            pytorch_model.bn1.running_mean.data = torch.tensor(moving_mean, dtype=torch.float32)
+            pytorch_model.bn1.running_var.data = torch.tensor(moving_var, dtype=torch.float32)
+        
         # Conv2
         if 'conv2' in keras_weights and len(keras_weights['conv2']) >= 2:
             kernel, bias = keras_weights['conv2'][:2]
@@ -511,6 +531,14 @@ class ProfitabilityClassifier:
                 kernel.transpose(2, 1, 0), dtype=torch.float32
             )
             pytorch_model.conv2.bias.data = torch.tensor(bias, dtype=torch.float32)
+        
+        # BatchNorm2
+        if 'bn2' in keras_weights and len(keras_weights['bn2']) >= 4:
+            gamma, beta, moving_mean, moving_var = keras_weights['bn2'][:4]
+            pytorch_model.bn2.weight.data = torch.tensor(gamma, dtype=torch.float32)
+            pytorch_model.bn2.bias.data = torch.tensor(beta, dtype=torch.float32)
+            pytorch_model.bn2.running_mean.data = torch.tensor(moving_mean, dtype=torch.float32)
+            pytorch_model.bn2.running_var.data = torch.tensor(moving_var, dtype=torch.float32)
         
         # Dense1
         if 'dense1' in keras_weights and len(keras_weights['dense1']) >= 2:

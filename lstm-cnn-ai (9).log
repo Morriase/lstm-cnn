@@ -1,369 +1,0 @@
-6.8s 1 0.00s - Debugger warning: It seems that frozen modules are being used, which may
-6.8s 2 0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
-6.8s 3 0.00s - to python to disable frozen modules.
-6.8s 4 0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
-7.4s 5 0.00s - Debugger warning: It seems that frozen modules are being used, which may
-7.4s 6 0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
-7.4s 7 0.00s - to python to disable frozen modules.
-7.4s 8 0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
-8.4s 9 Cloning into 'lstm-cnn'...
-8.9s 10 remote: Enumerating objects: 204, done.[K
-8.9s 11 remote: Counting objects:   0% (1/204)[Kremote: Counting objects:   1% (3/204)[Kremote: Counting objects:   2% (5/204)[Kremote: Counting objects:   3% (7/204)[Kremote: Counting objects:   4% (9/204)[Kremote: Counting objects:   5% (11/204)[Kremote: Counting objects:   6% (13/204)[Kremote: Counting objects:   7% (15/204)[Kremote: Counting objects:   8% (17/204)[Kremote: Counting objects:   9% (19/204)[Kremote: Counting objects:  10% (21/204)[Kremote: Counting objects:  11% (23/204)[Kremote: Counting objects:  12% (25/204)[Kremote: Counting objects:  13% (27/204)[Kremote: Counting objects:  14% (29/204)[Kremote: Counting objects:  15% (31/204)[Kremote: Counting objects:  16% (33/204)[Kremote: Counting objects:  17% (35/204)[Kremote: Counting objects:  18% (37/204)[Kremote: Counting objects:  19% (39/204)[Kremote: Counting objects:  20% (41/204)[Kremote: Counting objects:  21% (43/204)[Kremote: Counting objects:  22% (45/204)[Kremote: Counting objects:  23% (47/204)[Kremote: Counting objects:  24% (49/204)[Kremote: Counting objects:  25% (51/204)[Kremote: Counting objects:  26% (54/204)[Kremote: Counting objects:  27% (56/204)[Kremote: Counting objects:  28% (58/204)[Kremote: Counting objects:  29% (60/204)[Kremote: Counting objects:  30% (62/204)[Kremote: Counting objects:  31% (64/204)[Kremote: Counting objects:  32% (66/204)[Kremote: Counting objects:  33% (68/204)[Kremote: Counting objects:  34% (70/204)[Kremote: Counting objects:  35% (72/204)[Kremote: Counting objects:  36% (74/204)[Kremote: Counting objects:  37% (76/204)[Kremote: Counting objects:  38% (78/204)[Kremote: Counting objects:  39% (80/204)[Kremote: Counting objects:  40% (82/204)[Kremote: Counting objects:  41% (84/204)[Kremote: Counting objects:  42% (86/204)[Kremote: Counting objects:  43% (88/204)[Kremote: Counting objects:  44% (90/204)[Kremote: Counting objects:  45% (92/204)[Kremote: Counting objects:  46% (94/204)[Kremote: Counting objects:  47% (96/204)[Kremote: Counting objects:  48% (98/204)[Kremote: Counting objects:  49% (100/204)[Kremote: Counting objects:  50% (102/204)[Kremote: Counting objects:  51% (105/204)[Kremote: Counting objects:  52% (107/204)[Kremote: Counting objects:  53% (109/204)[Kremote: Counting objects:  54% (111/204)[Kremote: Counting objects:  55% (113/204)[Kremote: Counting objects:  56% (115/204)[Kremote: Counting objects:  57% (117/204)[Kremote: Counting objects:  58% (119/204)[Kremote: Counting objects:  59% (121/204)[Kremote: Counting objects:  60% (123/204)[Kremote: Counting objects:  61% (125/204)[Kremote: Counting objects:  62% (127/204)[Kremote: Counting objects:  63% (129/204)[Kremote: Counting objects:  64% (131/204)[Kremote: Counting objects:  65% (133/204)[Kremote: Counting objects:  66% (135/204)[Kremote: Counting objects:  67% (137/204)[Kremote: Counting objects:  68% (139/204)[Kremote: Counting objects:  69% (141/204)[Kremote: Counting objects:  70% (143/204)[Kremote: Counting objects:  71% (145/204)[Kremote: Counting objects:  72% (147/204)[Kremote: Counting objects:  73% (149/204)[Kremote: Counting objects:  74% (151/204)[Kremote: Counting objects:  75% (153/204)[Kremote: Counting objects:  76% (156/204)[Kremote: Counting objects:  77% (158/204)[Kremote: Counting objects:  78% (160/204)[Kremote: Counting objects:  79% (162/204)[Kremote: Counting objects:  80% (164/204)[Kremote: Counting objects:  81% (166/204)[Kremote: Counting objects:  82% (168/204)[Kremote: Counting objects:  83% (170/204)[Kremote: Counting objects:  84% (172/204)[Kremote: Counting objects:  85% (174/204)[Kremote: Counting objects:  86% (176/204)[Kremote: Counting objects:  87% (178/204)[Kremote: Counting objects:  88% (180/204)[Kremote: Counting objects:  89% (182/204)[Kremote: Counting objects:  90% (184/204)[Kremote: Counting objects:  91% (186/204)[Kremote: Counting objects:  92% (188/204)[Kremote: Counting objects:  93% (190/204)[Kremote: Counting objects:  94% (192/204)[Kremote: Counting objects:  95% (194/204)[Kremote: Counting objects:  96% (196/204)[Kremote: Counting objects:  97% (198/204)[Kremote: Counting objects:  98% (200/204)[Kremote: Counting objects:  99% (202/204)[Kremote: Counting objects: 100% (204/204)[Kremote: Counting objects: 100% (204/204), done.[K
-8.9s 12 remote: Compressing objects:   0% (1/134)[Kremote: Compressing objects:   1% (2/134)[Kremote: Compressing objects:   2% (3/134)[Kremote: Compressing objects:   3% (5/134)[Kremote: Compressing objects:   4% (6/134)[Kremote: Compressing objects:   5% (7/134)[Kremote: Compressing objects:   6% (9/134)[Kremote: Compressing objects:   7% (10/134)[Kremote: Compressing objects:   8% (11/134)[Kremote: Compressing objects:   9% (13/134)[Kremote: Compressing objects:  10% (14/134)[Kremote: Compressing objects:  11% (15/134)[Kremote: Compressing objects:  12% (17/134)[Kremote: Compressing objects:  13% (18/134)[Kremote: Compressing objects:  14% (19/134)[Kremote: Compressing objects:  15% (21/134)[Kremote: Compressing objects:  16% (22/134)[Kremote: Compressing objects:  17% (23/134)[Kremote: Compressing objects:  18% (25/134)[Kremote: Compressing objects:  19% (26/134)[Kremote: Compressing objects:  20% (27/134)[Kremote: Compressing objects:  21% (29/134)[Kremote: Compressing objects:  22% (30/134)[Kremote: Compressing objects:  23% (31/134)[Kremote: Compressing objects:  24% (33/134)[Kremote: Compressing objects:  25% (34/134)[Kremote: Compressing objects:  26% (35/134)[Kremote: Compressing objects:  27% (37/134)[Kremote: Compressing objects:  28% (38/134)[Kremote: Compressing objects:  29% (39/134)[Kremote: Compressing objects:  30% (41/134)[Kremote: Compressing objects:  31% (42/134)[Kremote: Compressing objects:  32% (43/134)[Kremote: Compressing objects:  33% (45/134)[Kremote: Compressing objects:  34% (46/134)[Kremote: Compressing objects:  35% (47/134)[Kremote: Compressing objects:  36% (49/134)[Kremote: Compressing objects:  37% (50/134)[Kremote: Compressing objects:  38% (51/134)[Kremote: Compressing objects:  39% (53/134)[Kremote: Compressing objects:  40% (54/134)[Kremote: Compressing objects:  41% (55/134)[Kremote: Compressing objects:  42% (57/134)[Kremote: Compressing objects:  43% (58/134)[Kremote: Compressing objects:  44% (59/134)[Kremote: Compressing objects:  45% (61/134)[Kremote: Compressing objects:  46% (62/134)[Kremote: Compressing objects:  47% (63/134)[Kremote: Compressing objects:  48% (65/134)[Kremote: Compressing objects:  49% (66/134)[Kremote: Compressing objects:  50% (67/134)[Kremote: Compressing objects:  51% (69/134)[Kremote: Compressing objects:  52% (70/134)[Kremote: Compressing objects:  53% (72/134)[Kremote: Compressing objects:  54% (73/134)[Kremote: Compressing objects:  55% (74/134)[Kremote: Compressing objects:  56% (76/134)[Kremote: Compressing objects:  57% (77/134)[Kremote: Compressing objects:  58% (78/134)[Kremote: Compressing objects:  59% (80/134)[Kremote: Compressing objects:  60% (81/134)[Kremote: Compressing objects:  61% (82/134)[Kremote: Compressing objects:  62% (84/134)[Kremote: Compressing objects:  63% (85/134)[Kremote: Compressing objects:  64% (86/134)[Kremote: Compressing objects:  65% (88/134)[Kremote: Compressing objects:  66% (89/134)[Kremote: Compressing objects:  67% (90/134)[Kremote: Compressing objects:  68% (92/134)[Kremote: Compressing objects:  69% (93/134)[Kremote: Compressing objects:  70% (94/134)[Kremote: Compressing objects:  71% (96/134)[Kremote: Compressing objects:  72% (97/134)[Kremote: Compressing objects:  73% (98/134)[Kremote: Compressing objects:  74% (100/134)[Kremote: Compressing objects:  75% (101/134)[Kremote: Compressing objects:  76% (102/134)[Kremote: Compressing objects:  77% (104/134)[Kremote: Compressing objects:  78% (105/134)[Kremote: Compressing objects:  79% (106/134)[Kremote: Compressing objects:  80% (108/134)[Kremote: Compressing objects:  81% (109/134)[Kremote: Compressing objects:  82% (110/134)[Kremote: Compressing objects:  83% (112/134)[Kremote: Compressing objects:  84% (113/134)[Kremote: Compressing objects:  85% (114/134)[Kremote: Compressing objects:  86% (116/134)[Kremote: Compressing objects:  87% (117/134)[Kremote: Compressing objects:  88% (118/134)[Kremote: Compressing objects:  89% (120/134)[Kremote: Compressing objects:  90% (121/134)[Kremote: Compressing objects:  91% (122/134)[Kremote: Compressing objects:  92% (124/134)[Kremote: Compressing objects:  93% (125/134)[Kremote: Compressing objects:  94% (126/134)[Kremote: Compressing objects:  95% (128/134)[Kremote: Compressing objects:  96% (129/134)[Kremote: Compressing objects:  97% (130/134)[Kremote: Compressing objects:  98% (132/134)[Kremote: Compressing objects:  99% (133/134)[Kremote: Compressing objects: 100% (134/134)[Kremote: Compressing objects: 100% (134/134), done.[K
-9.0s 13 Receiving objects:   0% (1/204)Receiving objects:   1% (3/204)Receiving objects:   2% (5/204)Receiving objects:   3% (7/204)Receiving objects:   4% (9/204)Receiving objects:   5% (11/204)Receiving objects:   6% (13/204)Receiving objects:   7% (15/204)Receiving objects:   8% (17/204)Receiving objects:   9% (19/204)Receiving objects:  10% (21/204)Receiving objects:  11% (23/204)Receiving objects:  12% (25/204)Receiving objects:  13% (27/204)Receiving objects:  14% (29/204)Receiving objects:  15% (31/204)Receiving objects:  16% (33/204)Receiving objects:  17% (35/204)Receiving objects:  18% (37/204)Receiving objects:  19% (39/204)Receiving objects:  20% (41/204)Receiving objects:  21% (43/204)Receiving objects:  22% (45/204)Receiving objects:  23% (47/204)Receiving objects:  24% (49/204)Receiving objects:  25% (51/204)Receiving objects:  26% (54/204)Receiving objects:  27% (56/204)Receiving objects:  28% (58/204)Receiving objects:  29% (60/204)Receiving objects:  30% (62/204)Receiving objects:  31% (64/204)Receiving objects:  32% (66/204)Receiving objects:  33% (68/204)Receiving objects:  34% (70/204)Receiving objects:  35% (72/204)Receiving objects:  36% (74/204)Receiving objects:  37% (76/204)Receiving objects:  38% (78/204)Receiving objects:  39% (80/204)Receiving objects:  40% (82/204)Receiving objects:  41% (84/204)Receiving objects:  42% (86/204)Receiving objects:  43% (88/204)Receiving objects:  44% (90/204)Receiving objects:  45% (92/204)Receiving objects:  46% (94/204)Receiving objects:  47% (96/204)Receiving objects:  48% (98/204)Receiving objects:  49% (100/204)Receiving objects:  50% (102/204)Receiving objects:  51% (105/204)Receiving objects:  52% (107/204)Receiving objects:  53% (109/204)Receiving objects:  54% (111/204)Receiving objects:  55% (113/204)Receiving objects:  56% (115/204)Receiving objects:  57% (117/204)Receiving objects:  58% (119/204)Receiving objects:  59% (121/204)Receiving objects:  60% (123/204)Receiving objects:  61% (125/204)Receiving objects:  62% (127/204)Receiving objects:  63% (129/204)Receiving objects:  64% (131/204)Receiving objects:  65% (133/204)Receiving objects:  66% (135/204)Receiving objects:  67% (137/204)Receiving objects:  68% (139/204)Receiving objects:  69% (141/204)Receiving objects:  70% (143/204)Receiving objects:  71% (145/204)Receiving objects:  72% (147/204)remote: Total 204 (delta 109), reused 155 (delta 60), pack-reused 0 (from 0)[K
-9.0s 14 Receiving objects:  73% (149/204)Receiving objects:  74% (151/204)Receiving objects:  75% (153/204)Receiving objects:  76% (156/204)Receiving objects:  77% (158/204)Receiving objects:  78% (160/204)Receiving objects:  79% (162/204)Receiving objects:  80% (164/204)Receiving objects:  81% (166/204)Receiving objects:  82% (168/204)Receiving objects:  83% (170/204)Receiving objects:  84% (172/204)Receiving objects:  85% (174/204)Receiving objects:  86% (176/204)Receiving objects:  87% (178/204)Receiving objects:  88% (180/204)Receiving objects:  89% (182/204)Receiving objects:  90% (184/204)Receiving objects:  91% (186/204)Receiving objects:  92% (188/204)Receiving objects:  93% (190/204)Receiving objects:  94% (192/204)Receiving objects:  95% (194/204)Receiving objects:  96% (196/204)Receiving objects:  97% (198/204)Receiving objects:  98% (200/204)Receiving objects:  99% (202/204)Receiving objects: 100% (204/204)Receiving objects: 100% (204/204), 877.46 KiB | 8.69 MiB/s, done.
-9.0s 15 Resolving deltas:   0% (0/109)Resolving deltas:   1% (2/109)Resolving deltas:   2% (3/109)Resolving deltas:   3% (4/109)Resolving deltas:   4% (5/109)Resolving deltas:   7% (8/109)Resolving deltas:   8% (9/109)Resolving deltas:   9% (10/109)Resolving deltas:  10% (11/109)Resolving deltas:  11% (12/109)Resolving deltas:  13% (15/109)Resolving deltas:  14% (16/109)Resolving deltas:  15% (17/109)Resolving deltas:  16% (18/109)Resolving deltas:  17% (19/109)Resolving deltas:  18% (20/109)Resolving deltas:  19% (21/109)Resolving deltas:  20% (22/109)Resolving deltas:  21% (23/109)Resolving deltas:  22% (24/109)Resolving deltas:  23% (26/109)Resolving deltas:  24% (27/109)Resolving deltas:  25% (28/109)Resolving deltas:  26% (29/109)Resolving deltas:  27% (30/109)Resolving deltas:  28% (31/109)Resolving deltas:  29% (32/109)Resolving deltas:  30% (33/109)Resolving deltas:  31% (34/109)Resolving deltas:  32% (35/109)Resolving deltas:  33% (36/109)Resolving deltas:  34% (38/109)Resolving deltas:  35% (39/109)Resolving deltas:  36% (40/109)Resolving deltas:  37% (41/109)Resolving deltas:  38% (42/109)Resolving deltas:  39% (43/109)Resolving deltas:  40% (44/109)Resolving deltas:  41% (45/109)Resolving deltas:  42% (46/109)Resolving deltas:  43% (47/109)Resolving deltas:  44% (48/109)Resolving deltas:  45% (50/109)Resolving deltas:  46% (51/109)Resolving deltas:  48% (53/109)Resolving deltas:  49% (54/109)Resolving deltas:  50% (55/109)Resolving deltas:  51% (56/109)Resolving deltas:  52% (57/109)Resolving deltas:  53% (58/109)Resolving deltas:  54% (59/109)Resolving deltas:  55% (60/109)Resolving deltas:  56% (62/109)Resolving deltas:  57% (63/109)Resolving deltas:  58% (64/109)Resolving deltas:  59% (65/109)Resolving deltas:  60% (66/109)Resolving deltas:  61% (67/109)Resolving deltas:  62% (68/109)Resolving deltas:  63% (69/109)Resolving deltas:  64% (70/109)Resolving deltas:  65% (71/109)Resolving deltas:  66% (72/109)Resolving deltas:  67% (74/109)Resolving deltas:  68% (75/109)Resolving deltas:  69% (76/109)Resolving deltas:  70% (77/109)Resolving deltas:  71% (78/109)Resolving deltas:  72% (79/109)Resolving deltas:  73% (80/109)Resolving deltas:  74% (81/109)Resolving deltas:  75% (82/109)Resolving deltas:  76% (83/109)Resolving deltas:  77% (84/109)Resolving deltas:  78% (86/109)Resolving deltas:  79% (87/109)Resolving deltas:  80% (88/109)Resolving deltas:  81% (89/109)Resolving deltas:  82% (90/109)Resolving deltas:  83% (91/109)Resolving deltas:  84% (92/109)Resolving deltas:  85% (93/109)Resolving deltas:  86% (94/109)Resolving deltas:  87% (95/109)Resolving deltas:  88% (96/109)Resolving deltas:  89% (98/109)Resolving deltas:  90% (99/109)Resolving deltas:  91% (100/109)Resolving deltas:  92% (101/109)Resolving deltas:  93% (102/109)Resolving deltas:  94% (103/109)Resolving deltas:  95% (104/109)Resolving deltas:  96% (105/109)Resolving deltas:  97% (106/109)Resolving deltas:  98% (107/109)Resolving deltas:  99% (108/109)Resolving deltas: 100% (109/109)Resolving deltas: 100% (109/109), done.
-11.2s 16 [?25l   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/61.6 kB[0m [31m?[0m eta [36m-:--:--[0m[2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m61.6/61.6 kB[0m [31m2.8 MB/s[0m eta [36m0:00:00[0m
-15.5s 17 [?25h[?25l   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/455.8 kB[0m [31m?[0m eta [36m-:--:--[0m[2K   [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m [32m450.6/455.8 kB[0m [31m14.1 MB/s[0m eta [36m0:00:01[0m[2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m455.8/455.8 kB[0m [31m10.6 MB/s[0m eta [36m0:00:00[0m
-15.7s 18 [?25h[?25l   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/16.0 MB[0m [31m?[0m eta [36m-:--:--[0m[2K   [91m━━━━━━━━━━━[0m[90m╺[0m[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m4.5/16.0 MB[0m [31m134.8 MB/s[0m eta [36m0:00:01[0m[2K   [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m[90m━━━━━━━[0m [32m13.2/16.0 MB[0m [31m233.7 MB/s[0m eta [36m0:00:01[0m[2K   [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m [32m16.0/16.0 MB[0m [31m264.0 MB/s[0m eta [36m0:00:01[0m[2K   [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m [32m16.0/16.0 MB[0m [31m264.0 MB/s[0m eta [36m0:00:01[0m[2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m16.0/16.0 MB[0m [31m102.9 MB/s[0m eta [36m0:00:00[0m
-15.9s 19 [?25h[?25l   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/17.4 MB[0m [31m?[0m eta [36m-:--:--[0m[2K   [91m━━━━━━━━━━━━━━━━━━[0m[90m╺[0m[90m━━━━━━━━━━━━━━━━━━━━━[0m [32m8.0/17.4 MB[0m [31m239.5 MB/s[0m eta [36m0:00:01[0m[2K   [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m [32m17.3/17.4 MB[0m [31m267.4 MB/s[0m eta [36m0:00:01[0m[2K   [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m [32m17.4/17.4 MB[0m [31m257.1 MB/s[0m eta [36m0:00:01[0m[2K   [91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[91m╸[0m [32m17.4/17.4 MB[0m [31m257.1 MB/s[0m eta [36m0:00:01[0m[2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m17.4/17.4 MB[0m [31m93.1 MB/s[0m eta [36m0:00:00[0m
-15.9s 20 [?25h[?25l   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/162.1 kB[0m [31m?[0m eta [36m-:--:--[0m[2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m162.1/162.1 kB[0m [31m14.6 MB/s[0m eta [36m0:00:00[0m
-16.0s 21 [?25h[?25l   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/46.0 kB[0m [31m?[0m eta [36m-:--:--[0m[2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m46.0/46.0 kB[0m [31m4.1 MB/s[0m eta [36m0:00:00[0m
-16.0s 22 [?25h[?25l   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/86.8 kB[0m [31m?[0m eta [36m-:--:--[0m[2K   [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m86.8/86.8 kB[0m [31m8.5 MB/s[0m eta [36m0:00:00[0m
-29.1s 23 [?25h[31mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
-29.1s 24 bigframes 2.26.0 requires google-cloud-bigquery-storage<3.0.0,>=2.30.0, which is not installed.
-29.1s 25 grain 0.2.15 requires protobuf>=5.28.3, but you have protobuf 3.20.3 which is incompatible.
-29.1s 26 ray 2.52.1 requires click!=8.3.*,>=7.0, but you have click 8.3.1 which is incompatible.
-29.1s 27 opentelemetry-proto 1.37.0 requires protobuf<7.0,>=5.0, but you have protobuf 3.20.3 which is incompatible.
-29.1s 28 tensorflow-metadata 1.17.2 requires protobuf>=4.25.2; python_version >= "3.11", but you have protobuf 3.20.3 which is incompatible.
-29.1s 29 ydf 0.13.0 requires protobuf<7.0.0,>=5.29.1, but you have protobuf 3.20.3 which is incompatible.
-29.1s 30 bigframes 2.26.0 requires rich<14,>=12.4.4, but you have rich 14.2.0 which is incompatible.
-29.1s 31 grpcio-status 1.71.2 requires protobuf<6.0dev,>=5.26.1, but you have protobuf 3.20.3 which is incompatible.
-29.1s 32 gcsfs 2025.3.0 requires fsspec==2025.3.0, but you have fsspec 2025.10.0 which is incompatible.[0m[31m
-29.6s 33 [0mAlready up to date.
-30.5s 34 [32m10:34:35[0m | [1mINFO    [0m | [36mDataCleaner initialized with outlier_threshold=3.0[0m
-30.5s 35 
-30.5s 36 [32m10:34:35[0m | [1mINFO    [0m | [36mDataCleaner initialized with outlier_threshold=3.0[0m
-30.5s 37 [32m10:34:35[0m | [1mINFO    [0m | [36mSequenceBuilder initialized with lookback=30[0m
-30.5s 38 
-30.5s 39 [32m10:34:35[0m | [1mINFO    [0m | [36mSequenceBuilder initialized with lookback=30[0m
-30.5s 40 [32m10:34:35[0m | [1mINFO    [0m | [36mTrainingPipeline initialized with config: {'lookback_window': 30, 'target_column': None, 'train_split': 0.8, 'lstm_units': 50, 'lstm_dropout': 0.2, 'cnn_filters': 64, 'cnn_kernel_size': 3, 'dense_units': 32, 'learning_rate': 0.001, 'epochs': 150, 'batch_size': 128, 'early_stopping_patience': 10, 'cv_folds': 5, 'use_cross_validation': False, 'outlier_threshold': 3.0, 'output_dir': '/kaggle/working/results', 'model_filename': 'lstm_cnn_xauusd.onnx', 'train_profitability_model': True, 'profitability_model_filename': 'profitability_classifier.onnx', 'scalers_filename': 'scalers.csv', 'long_outcome_column': 'Long_Outcome', 'short_outcome_column': 'Short_Outcome'}[0m
-30.5s 41 
-30.5s 42 [32m10:34:35[0m | [1mINFO    [0m | [36mTrainingPipeline initialized with config: {'lookback_window': 30, 'target_column': None, 'train_split': 0.8, 'lstm_units': 50, 'lstm_dropout': 0.2, 'cnn_filters': 64, 'cnn_kernel_size': 3, 'dense_units': 32, 'learning_rate': 0.001, 'epochs': 150, 'batch_size': 128, 'early_stopping_patience': 10, 'cv_folds': 5, 'use_cross_validation': False, 'outlier_threshold': 3.0, 'output_dir': '/kaggle/working/results', 'model_filename': 'lstm_cnn_xauusd.onnx', 'train_profitability_model': True, 'profitability_model_filename': 'profitability_classifier.onnx', 'scalers_filename': 'scalers.csv', 'long_outcome_column': 'Long_Outcome', 'short_outcome_column': 'Short_Outcome'}[0m
-30.5s 43 [32m10:34:35[0m | [1mINFO    [0m | [36mLoading data from: /kaggle/input/lstm-cnn/training_data.csv[0m
-30.5s 44 
-30.5s 45 [32m10:34:35[0m | [1mINFO    [0m | [36mLoading data from: /kaggle/input/lstm-cnn/training_data.csv[0m
-30.6s 46 [32m10:34:35[0m | [1mINFO    [0m | [36mLoaded 61510 rows, 9 columns[0m
-30.6s 47 
-30.6s 48 [32m10:34:35[0m | [1mINFO    [0m | [36mLoaded 61510 rows, 9 columns[0m
-30.6s 49 [32m10:34:35[0m | [1mINFO    [0m | [36mRunning data cleaning pipeline...[0m
-30.6s 50 
-30.6s 51 [32m10:34:35[0m | [1mINFO    [0m | [36mRunning data cleaning pipeline...[0m
-30.6s 52 [32m10:34:35[0m | [1mINFO    [0m | [36mStarting data cleaning pipeline. Input shape: (61510, 9)[0m
-30.6s 53 
-30.6s 54 [32m10:34:35[0m | [1mINFO    [0m | [36mStarting data cleaning pipeline. Input shape: (61510, 9)[0m
-30.6s 55 [32m10:34:35[0m | [1mINFO    [0m | [36mForward fill: 0 NaN values filled, 0 rows affected[0m
-30.6s 56 
-30.6s 57 [32m10:34:35[0m | [1mINFO    [0m | [36mForward fill: 0 NaN values filled, 0 rows affected[0m
-30.7s 58 [32m10:34:35[0m | [1mINFO    [0m | [36mOutlier handling: 7508 outliers capped, 3981 rows affected[0m
-30.7s 59 
-30.7s 60 [32m10:34:35[0m | [1mINFO    [0m | [36mOutlier handling: 7508 outliers capped, 3981 rows affected[0m
-30.7s 61 [32m10:34:35[0m | [1mINFO    [0m | [36mValidation passed: No NaN values remain[0m
-30.7s 62 
-30.7s 63 [32m10:34:35[0m | [1mINFO    [0m | [36mValidation passed: No NaN values remain[0m
-30.7s 64 [32m10:34:35[0m | [1mINFO    [0m | [36mCleaning complete. Output shape: (61510, 9). Rows removed: 0[0m
-30.7s 65 
-30.7s 66 [32m10:34:35[0m | [1mINFO    [0m | [36mCleaning complete. Output shape: (61510, 9). Rows removed: 0[0m
-30.7s 67 [32m10:34:35[0m | [1mINFO    [0m | [36mCleaned data shape: (61510, 9)[0m
-30.7s 68 
-30.7s 69 [32m10:34:35[0m | [1mINFO    [0m | [36mCleaned data shape: (61510, 9)[0m
-30.7s 70 [32m10:34:35[0m | [1mINFO    [0m | [36mTrain/test split: 49208 train, 12302 test (80%/20%)[0m
-30.7s 71 
-30.7s 72 [32m10:34:35[0m | [1mINFO    [0m | [36mTrain/test split: 49208 train, 12302 test (80%/20%)[0m
-30.7s 73 [32m10:34:35[0m | [1mINFO    [0m | [36mBuilding sequences...[0m
-30.7s 74 
-30.7s 75 [32m10:34:35[0m | [1mINFO    [0m | [36mBuilding sequences...[0m
-30.7s 76 [32m10:34:35[0m | [1mINFO    [0m | [36mFound triple barrier outcome columns, extracting...[0m
-30.7s 77 
-30.7s 78 [32m10:34:35[0m | [1mINFO    [0m | [36mFound triple barrier outcome columns, extracting...[0m
-30.7s 79 [32m10:34:35[0m | [1mINFO    [0m | [36mComputed normalization stats from training data[0m
-30.7s 80 
-30.7s 81 [32m10:34:35[0m | [1mINFO    [0m | [36mComputed normalization stats from training data[0m
-30.7s 82 [32m10:34:35[0m | [1mINFO    [0m | [36mTarget range: [1050.00, 2070.29][0m
-30.7s 83 
-30.7s 84 [32m10:34:35[0m | [1mINFO    [0m | [36mTarget range: [1050.00, 2070.29][0m
-30.7s 85 [32m10:34:35[0m | [1mINFO    [0m | [36mNormalized features to [0, 1] range[0m
-30.7s 86 
-30.7s 87 [32m10:34:35[0m | [1mINFO    [0m | [36mNormalized features to [0, 1] range[0m
-30.7s 88 
-30.7s 89 ============================================================
-30.7s 90 LSTM-CNN XAUUSD DUAL-MODEL TRAINING PIPELINE
-30.7s 91 ============================================================
-30.7s 92 
-30.7s 93 [1/8] Loading data...
-30.7s 94 [2/8] Cleaning data...
-30.7s 95 [3/8] Splitting train/test...
-30.7s 96 [4/8] Building sequences...
-30.7s 97 [32m10:34:35[0m | [1mINFO    [0m | [36mCreating 49178 sequences from 49208 samples with lookback=30, features=6[0m
-30.7s 98 
-30.7s 99 [32m10:34:35[0m | [1mINFO    [0m | [36mCreating 49178 sequences from 49208 samples with lookback=30, features=6[0m
-30.8s 100 [32m10:34:36[0m | [1mINFO    [0m | [36mCreated sequences: X shape=(49178, 30, 6), y shape=(49178, 1)[0m
-30.8s 101 
-30.8s 102 [32m10:34:36[0m | [1mINFO    [0m | [36mCreated sequences: X shape=(49178, 30, 6), y shape=(49178, 1)[0m
-30.8s 103 [32m10:34:36[0m | [1mINFO    [0m | [36mX range: [0.0000, 1.0000], y range: [0.0000, 1.0000][0m
-30.8s 104 
-30.8s 105 [32m10:34:36[0m | [1mINFO    [0m | [36mX range: [0.0000, 1.0000], y range: [0.0000, 1.0000][0m
-30.8s 106 [32m10:34:36[0m | [1mINFO    [0m | [36mUsing existing normalization stats (test data)[0m
-30.8s 107 
-30.8s 108 [32m10:34:36[0m | [1mINFO    [0m | [36mUsing existing normalization stats (test data)[0m
-30.8s 109 [32m10:34:36[0m | [1mINFO    [0m | [36mNormalized features to [0, 1] range[0m
-30.8s 110 
-30.8s 111 [32m10:34:36[0m | [1mINFO    [0m | [36mNormalized features to [0, 1] range[0m
-30.8s 112 [32m10:34:36[0m | [1mINFO    [0m | [36mCreating 12272 sequences from 12302 samples with lookback=30, features=6[0m
-30.8s 113 
-30.8s 114 [32m10:34:36[0m | [1mINFO    [0m | [36mCreating 12272 sequences from 12302 samples with lookback=30, features=6[0m
-30.8s 115 [32m10:34:36[0m | [1mINFO    [0m | [36mCreated sequences: X shape=(12272, 30, 6), y shape=(12272, 1)[0m
-30.8s 116 
-30.8s 117 [32m10:34:36[0m | [1mINFO    [0m | [36mCreated sequences: X shape=(12272, 30, 6), y shape=(12272, 1)[0m
-30.8s 118 [32m10:34:36[0m | [1mINFO    [0m | [36mX range: [0.0000, 2.7032], y range: [0.9058, 2.7033][0m
-30.8s 119 
-30.8s 120 [32m10:34:36[0m | [1mINFO    [0m | [36mX range: [0.0000, 2.7032], y range: [0.9058, 2.7033][0m
-30.8s 121 [32m10:34:36[0m | [1mINFO    [0m | [36mTriple barrier outcomes aligned: train=49178, test=12272[0m
-30.8s 122 
-30.8s 123 [32m10:34:36[0m | [1mINFO    [0m | [36mTriple barrier outcomes aligned: train=49178, test=12272[0m
-30.8s 124 [32m10:34:36[0m | [1mINFO    [0m | [36mTraining sequences: X=(49178, 30, 6), y=(49178, 1)[0m
-30.8s 125 
-30.8s 126 [32m10:34:36[0m | [1mINFO    [0m | [36mTraining sequences: X=(49178, 30, 6), y=(49178, 1)[0m
-30.8s 127 [32m10:34:36[0m | [1mINFO    [0m | [36mTest sequences: X=(12272, 30, 6), y=(12272, 1)[0m
-30.8s 128 
-30.8s 129 [32m10:34:36[0m | [1mINFO    [0m | [36mTest sequences: X=(12272, 30, 6), y=(12272, 1)[0m
-33.1s 130 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-33.1s 131 E0000 00:00:1768041277.837279      24 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
-33.1s 132 E0000 00:00:1768041277.893940      24 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
-33.1s 133 W0000 00:00:1768041278.331725      24 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-33.1s 134 W0000 00:00:1768041278.331763      24 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-33.1s 135 W0000 00:00:1768041278.331766      24 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-33.1s 136 W0000 00:00:1768041278.331769      24 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-33.1s 137 
-33.1s 138 ------------------------------------------------------------
-33.1s 139 MODEL 1: PRICE PREDICTOR (LSTM-CNN)
-33.1s 140 ------------------------------------------------------------
-33.1s 141 Training on 49178 samples...
-33.3s 142 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-33.3s 143 E0000 00:00:1768041277.837279      24 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
-33.3s 144 E0000 00:00:1768041277.893940      24 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
-33.3s 145 W0000 00:00:1768041278.331725      24 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-33.3s 146 W0000 00:00:1768041278.331763      24 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-33.3s 147 W0000 00:00:1768041278.331766      24 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-33.3s 148 W0000 00:00:1768041278.331769      24 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-33.3s 149 
-33.3s 150 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-33.3s 151 E0000 00:00:1768041277.837279      24 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
-33.3s 152 E0000 00:00:1768041277.893940      24 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
-33.3s 153 W0000 00:00:1768041278.331725      24 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-33.3s 154 W0000 00:00:1768041278.331763      24 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-33.3s 155 W0000 00:00:1768041278.331766      24 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-33.3s 156 W0000 00:00:1768041278.331769      24 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
-46.2s 157 [32m10:34:51[0m | [1mINFO    [0m | [36mFound 2 GPU(s)[0m
-46.2s 158 
-46.2s 159 [32m10:34:51[0m | [1mINFO    [0m | [36mFound 2 GPU(s)[0m
-46.3s 160 I0000 00:00:1768041291.474591      24 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 13942 MB memory:  -> device: 0, name: Tesla T4, pci bus id: 0000:00:04.0, compute capability: 7.5
-46.3s 161 I0000 00:00:1768041291.478433      24 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:1 with 13942 MB memory:  -> device: 1, name: Tesla T4, pci bus id: 0000:00:05.0, compute capability: 7.5
-46.3s 162 I0000 00:00:1768041291.474591      24 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 13942 MB memory:  -> device: 0, name: Tesla T4, pci bus id: 0000:00:04.0, compute capability: 7.5
-46.3s 163 
-46.3s 164 I0000 00:00:1768041291.474591      24 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 13942 MB memory:  -> device: 0, name: Tesla T4, pci bus id: 0000:00:04.0, compute capability: 7.5
-46.3s 165 I0000 00:00:1768041291.478433      24 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:1 with 13942 MB memory:  -> device: 1, name: Tesla T4, pci bus id: 0000:00:05.0, compute capability: 7.5
-46.3s 166 [32m10:34:51[0m | [1mINFO    [0m | [36mUsing MirroredStrategy with 2 GPUs[0m
-46.3s 167 
-46.3s 168 I0000 00:00:1768041291.478433      24 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:1 with 13942 MB memory:  -> device: 1, name: Tesla T4, pci bus id: 0000:00:05.0, compute capability: 7.5
-46.3s 169 [32m10:34:51[0m | [1mINFO    [0m | [36mUsing MirroredStrategy with 2 GPUs[0m
-46.3s 170 [32m10:34:51[0m | [1mINFO    [0m | [36mBuilding model: lookback=30, features=6, lstm_units=50, cnn_filters=64[0m
-46.3s 171 
-46.3s 172 [32m10:34:51[0m | [1mINFO    [0m | [36mBuilding model: lookback=30, features=6, lstm_units=50, cnn_filters=64[0m
-47.8s 173 [32m10:34:53[0m | [1mINFO    [0m | [36mModel built: 16,329 parameters[0m
-47.8s 174 
-47.8s 175 [32m10:34:53[0m | [1mINFO    [0m | [36mModel built: 16,329 parameters[0m
-47.8s 176 [32m10:34:53[0m | [1mINFO    [0m | [36mTraining model...[0m
-47.8s 177 
-47.8s 178 [32m10:34:53[0m | [1mINFO    [0m | [36mTraining model...[0m
-51.4s 179 I0000 00:00:1768041296.671669     103 cuda_dnn.cc:529] Loaded cuDNN version 91002
-51.6s 180 I0000 00:00:1768041296.671669     103 cuda_dnn.cc:529] Loaded cuDNN version 91002
-51.6s 181 
-51.6s 182 I0000 00:00:1768041296.671669     103 cuda_dnn.cc:529] Loaded cuDNN version 91002
-52.3s 183 I0000 00:00:1768041297.509897     104 cuda_dnn.cc:529] Loaded cuDNN version 91002
-52.5s 184 I0000 00:00:1768041297.509897     104 cuda_dnn.cc:529] Loaded cuDNN version 91002
-52.5s 185 
-52.5s 186 I0000 00:00:1768041297.509897     104 cuda_dnn.cc:529] Loaded cuDNN version 91002
-62.3s 187 [Price] Epoch   1 | MSE: 0.020699 | val_MSE: 0.047309 | MAE: 0.0951 | dir_acc: 43.5%
-89.8s 188 [Price] Epoch  10 | MSE: 0.003069 | val_MSE: 0.055691 | MAE: 0.0390 | dir_acc: 44.2%
-95.2s 189 [32m10:35:40[0m | [1mINFO    [0m | [36m==================================================[0m
-95.2s 190 
-95.2s 191 [32m10:35:40[0m | [1mINFO    [0m | [36m==================================================[0m
-95.2s 192 [32m10:35:40[0m | [1mINFO    [0m | [36mTraining Profitability Classifier[0m
-95.2s 193 
-95.2s 194 [32m10:35:40[0m | [1mINFO    [0m | [36mTraining Profitability Classifier[0m
-95.2s 195 [32m10:35:40[0m | [1mINFO    [0m | [36m==================================================[0m
-95.2s 196 
-95.2s 197 [32m10:35:40[0m | [1mINFO    [0m | [36m==================================================[0m
-95.2s 198 [32m10:35:40[0m | [1mINFO    [0m | [36mModel built: 8,514 parameters[0m
-95.2s 199 
-95.2s 200 [32m10:35:40[0m | [1mINFO    [0m | [36mModel built: 8,514 parameters[0m
-95.2s 201 [32m10:35:40[0m | [1mINFO    [0m | [36mFiltering samples: 49098/49178 have valid outcomes[0m
-95.2s 202 
-95.2s 203 [32m10:35:40[0m | [1mINFO    [0m | [36mFiltering samples: 49098/49178 have valid outcomes[0m
-95.2s 204 [32m10:35:40[0m | [1mINFO    [0m | [36m  Long valid: 48010, Short valid: 48028[0m
-95.2s 205 
-95.2s 206 [32m10:35:40[0m | [1mINFO    [0m | [36m  Long valid: 48010, Short valid: 48028[0m
-95.2s 207 [32m10:35:40[0m | [1mINFO    [0m | [36mFiltering samples: 12257/12272 have valid outcomes[0m
-95.2s 208 
-95.2s 209 [32m10:35:40[0m | [1mINFO    [0m | [36mFiltering samples: 12257/12272 have valid outcomes[0m
-95.2s 210 [32m10:35:40[0m | [1mINFO    [0m | [36m  Long valid: 12000, Short valid: 12042[0m
-95.2s 211 
-95.2s 212 [32m10:35:40[0m | [1mINFO    [0m | [36m  Long valid: 12000, Short valid: 12042[0m
-95.2s 213 [32m10:35:40[0m | [1mINFO    [0m | [36mTraining on 46940 samples (filtered NaN)[0m
-95.2s 214 
-95.2s 215 [32m10:35:40[0m | [1mINFO    [0m | [36mTraining on 46940 samples (filtered NaN)[0m
-95.2s 216 [32m10:35:40[0m | [1mINFO    [0m | [36mLong class balance: 15745 wins / 31195 losses (33.5% win rate)[0m
-95.2s 217 
-95.2s 218 [32m10:35:40[0m | [1mINFO    [0m | [36mLong class balance: 15745 wins / 31195 losses (33.5% win rate)[0m
-95.2s 219 [32m10:35:40[0m | [1mINFO    [0m | [36mShort class balance: 15793 wins / 31147 losses (33.6% win rate)[0m
-95.2s 220 
-95.2s 221 [32m10:35:40[0m | [1mINFO    [0m | [36mShort class balance: 15793 wins / 31147 losses (33.6% win rate)[0m
-95.3s 222 [32m10:35:40[0m | [1mINFO    [0m | [36mAfter balancing: 62390 samples[0m
-95.3s 223 
-95.3s 224 [32m10:35:40[0m | [1mINFO    [0m | [36mAfter balancing: 62390 samples[0m
-95.3s 225 [32m10:35:40[0m | [1mINFO    [0m | [36mLong balanced: 31195 wins / 31195 losses[0m
-95.3s 226 
-95.3s 227 [32m10:35:40[0m | [1mINFO    [0m | [36mLong balanced: 31195 wins / 31195 losses[0m
-95.3s 228 [32m10:35:40[0m | [1mINFO    [0m | [36mShort balanced: 31195 wins / 31195 losses[0m
-95.3s 229 
-95.3s 230 [32m10:35:40[0m | [1mINFO    [0m | [36mShort balanced: 31195 wins / 31195 losses[0m
-95.4s 231 
-95.4s 232 ------------------------------------------------------------
-95.4s 233 MODEL 2: PROFITABILITY CLASSIFIER (CNN)
-95.4s 234 ------------------------------------------------------------
-95.4s 235 Training on 48010 long + 48028 short labeled samples...
-98.3s 236 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-98.3s 237 I0000 00:00:1768041343.543134     103 service.cc:152] XLA service 0x30906e30 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
-98.3s 238 I0000 00:00:1768041343.543172     103 service.cc:160]   StreamExecutor device (0): Tesla T4, Compute Capability 7.5
-98.3s 239 I0000 00:00:1768041343.543178     103 service.cc:160]   StreamExecutor device (1): Tesla T4, Compute Capability 7.5
-98.5s 240 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-98.5s 241 I0000 00:00:1768041343.543134     103 service.cc:152] XLA service 0x30906e30 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
-98.5s 242 I0000 00:00:1768041343.543172     103 service.cc:160]   StreamExecutor device (0): Tesla T4, Compute Capability 7.5
-98.5s 243 I0000 00:00:1768041343.543178     103 service.cc:160]   StreamExecutor device (1): Tesla T4, Compute Capability 7.5
-98.5s 244 
-98.5s 245 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-98.5s 246 I0000 00:00:1768041343.543134     103 service.cc:152] XLA service 0x30906e30 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
-98.5s 247 I0000 00:00:1768041343.543172     103 service.cc:160]   StreamExecutor device (0): Tesla T4, Compute Capability 7.5
-98.5s 248 I0000 00:00:1768041343.543178     103 service.cc:160]   StreamExecutor device (1): Tesla T4, Compute Capability 7.5
-101.2s 249 I0000 00:00:1768041346.440495     103 device_compiler.h:188] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
-101.4s 250 I0000 00:00:1768041346.440495     103 device_compiler.h:188] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
-101.4s 251 
-101.4s 252 I0000 00:00:1768041346.440495     103 device_compiler.h:188] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
-107.0s 253 [Profit] Epoch   1 | loss: 1.3863 | long_acc: 51.1% | short_acc: 50.2% | val_loss: 1.3638
-120.4s 254 [Profit] Epoch  10 | loss: 1.3618 | long_acc: 58.3% | short_acc: 51.7% | val_loss: 1.5147
-123.2s 255 [32m10:36:08[0m | [1mINFO    [0m | [36mProfitability model training complete![0m
-123.2s 256 
-123.2s 257 [32m10:36:08[0m | [1mINFO    [0m | [36mProfitability model training complete![0m
-123.2s 258 [32m10:36:08[0m | [1mINFO    [0m | [36mEvaluating model on test set...[0m
-123.2s 259 
-123.2s 260 [32m10:36:08[0m | [1mINFO    [0m | [36mEvaluating model on test set...[0m
-123.4s 261 
-123.4s 262 ------------------------------------------------------------
-123.4s 263 EVALUATION & EXPORT
-123.4s 264 ------------------------------------------------------------
-126.0s 265 [32m10:36:11[0m | [1mINFO    [0m | [36m==================================================[0m
-126.0s 266 
-126.0s 267 [32m10:36:11[0m | [1mINFO    [0m | [36m==================================================[0m
-126.0s 268 [32m10:36:11[0m | [1mINFO    [0m | [36mTEST RESULTS[0m
-126.0s 269 
-126.0s 270 [32m10:36:11[0m | [1mINFO    [0m | [36mTEST RESULTS[0m
-126.0s 271 [32m10:36:11[0m | [1mINFO    [0m | [36m==================================================[0m
-126.0s 272 
-126.0s 273 [32m10:36:11[0m | [1mINFO    [0m | [36m==================================================[0m
-126.0s 274 [32m10:36:11[0m | [1mINFO    [0m | [36mRMSE: 0.2157[0m
-126.0s 275 
-126.0s 276 [32m10:36:11[0m | [1mINFO    [0m | [36mRMSE: 0.2157[0m
-126.0s 277 [32m10:36:11[0m | [1mINFO    [0m | [36mMAE: 0.1668[0m
-126.0s 278 
-126.0s 279 [32m10:36:11[0m | [1mINFO    [0m | [36mMAE: 0.1668[0m
-126.0s 280 [32m10:36:11[0m | [1mINFO    [0m | [36mR²: 0.8553[0m
-126.0s 281 
-126.0s 282 [32m10:36:11[0m | [1mINFO    [0m | [36mR²: 0.8553[0m
-126.0s 283 [32m10:36:11[0m | [1mINFO    [0m | [36mMAPE: 8.09%[0m
-126.0s 284 
-126.0s 285 [32m10:36:11[0m | [1mINFO    [0m | [36mMAPE: 8.09%[0m
-126.0s 286 [32m10:36:11[0m | [1mINFO    [0m | [36mDirectional Accuracy: 43.9%[0m
-126.0s 287 
-126.0s 288 [32m10:36:11[0m | [1mINFO    [0m | [36mDirectional Accuracy: 43.9%[0m
-126.1s 289 [32m10:36:11[0m | [1mINFO    [0m | [36m==================================================[0m
-126.1s 290 
-126.1s 291 [32m10:36:11[0m | [1mINFO    [0m | [36m==================================================[0m
-129.5s 292 [32m10:36:14[0m | [1mINFO    [0m | [36mPredictions plot saved to: /kaggle/working/results/predictions.png[0m
-129.5s 293 
-129.5s 294 [32m10:36:14[0m | [1mINFO    [0m | [36mPredictions plot saved to: /kaggle/working/results/predictions.png[0m
-129.7s 295 [32m10:36:14[0m | [1mINFO    [0m | [36mLoss curves saved to: /kaggle/working/results/loss_curves.png[0m
-129.7s 296 
-129.7s 297 [32m10:36:14[0m | [1mINFO    [0m | [36mLoss curves saved to: /kaggle/working/results/loss_curves.png[0m
-129.7s 298 [32m10:36:14[0m | [1mINFO    [0m | [36mExporting model to ONNX: /kaggle/working/results/lstm_cnn_xauusd.onnx[0m
-129.7s 299 
-129.7s 300 [32m10:36:14[0m | [1mINFO    [0m | [36mExporting model to ONNX: /kaggle/working/results/lstm_cnn_xauusd.onnx[0m
-132.9s 301 [32m10:36:18[0m | [1mINFO    [0m | [36mExporting model to ONNX via PyTorch: /kaggle/working/results/lstm_cnn_xauusd.onnx[0m
-132.9s 302 
-132.9s 303 [32m10:36:18[0m | [1mINFO    [0m | [36mExporting model to ONNX via PyTorch: /kaggle/working/results/lstm_cnn_xauusd.onnx[0m
-132.9s 304 [32m10:36:18[0m | [1mINFO    [0m | [36mWeights transferred from Keras to PyTorch model[0m
-132.9s 305 
-132.9s 306 [32m10:36:18[0m | [1mINFO    [0m | [36mWeights transferred from Keras to PyTorch model[0m
-133.5s 307 [32m10:36:18[0m | [1mINFO    [0m | [36mONNX model saved to: /kaggle/working/results/lstm_cnn_xauusd.onnx[0m
-133.5s 308 
-133.5s 309 [32m10:36:18[0m | [1mINFO    [0m | [36mONNX model saved to: /kaggle/working/results/lstm_cnn_xauusd.onnx[0m
-133.5s 310 [32m10:36:18[0m | [1mINFO    [0m | [36mONNX model structure validation passed[0m
-133.5s 311 
-133.5s 312 [32m10:36:18[0m | [1mINFO    [0m | [36mONNX model structure validation passed[0m
-133.5s 313 [32m10:36:18[0m | [1mINFO    [0m | [36mInput shape validated: [0, 30, 6][0m
-133.5s 314 
-133.5s 315 [32m10:36:18[0m | [1mINFO    [0m | [36mInput shape validated: [0, 30, 6][0m
-133.5s 316 [32m10:36:18[0m | [1mINFO    [0m | [36mOutput shape: [0, 1][0m
-133.5s 317 
-133.5s 318 [32m10:36:18[0m | [1mINFO    [0m | [36mOutput shape: [0, 1][0m
-133.5s 319 [32m10:36:18[0m | [1mINFO    [0m | [36mTest inference successful. Output shape: (1, 1)[0m
-133.5s 320 
-133.5s 321 [32m10:36:18[0m | [1mINFO    [0m | [36mTest inference successful. Output shape: (1, 1)[0m
-133.5s 322 [32m10:36:18[0m | [1mINFO    [0m | [36mExporting profitability model to ONNX: /kaggle/working/results/profitability_classifier.onnx[0m
-133.5s 323 
-133.5s 324 [32m10:36:18[0m | [1mINFO    [0m | [36mExporting profitability model to ONNX: /kaggle/working/results/profitability_classifier.onnx[0m
-133.5s 325 [32m10:36:18[0m | [1mINFO    [0m | [36mExporting profitability model to ONNX: /kaggle/working/results/profitability_classifier.onnx[0m
-133.5s 326 
-133.5s 327 [32m10:36:18[0m | [1mINFO    [0m | [36mExporting profitability model to ONNX: /kaggle/working/results/profitability_classifier.onnx[0m
-133.5s 328 [32m10:36:18[0m | [1mINFO    [0m | [36mONNX model saved to: /kaggle/working/results/profitability_classifier.onnx[0m
-133.5s 329 
-133.5s 330 [32m10:36:18[0m | [1mINFO    [0m | [36mONNX model saved to: /kaggle/working/results/profitability_classifier.onnx[0m
-133.6s 331 [32m10:36:18[0m | [1mINFO    [0m | [36mONNX model structure validation passed[0m
-133.6s 332 
-133.6s 333 [32m10:36:18[0m | [1mINFO    [0m | [36mONNX model structure validation passed[0m
-133.6s 334 [32m10:36:18[0m | [1mINFO    [0m | [36mONNX inference test passed, output shape: (1, 2)[0m
-133.6s 335 
-133.6s 336 [32m10:36:18[0m | [1mINFO    [0m | [36mONNX inference test passed, output shape: (1, 2)[0m
-133.6s 337 [32m10:36:18[0m | [1mINFO    [0m | [36mScalers exported to: /kaggle/working/results/scalers.csv[0m
-133.6s 338 
-133.6s 339 [32m10:36:18[0m | [1mINFO    [0m | [36mScalers exported to: /kaggle/working/results/scalers.csv[0m
-133.6s 340 [32m10:36:18[0m | [1mINFO    [0m | [36m  Features: 6, Target range: [1050.00, 2070.29][0m
-133.6s 341 
-133.6s 342 [32m10:36:18[0m | [1mINFO    [0m | [36m  Features: 6, Target range: [1050.00, 2070.29][0m
-133.6s 343 [32m10:36:18[0m | [1mINFO    [0m | [36mMetrics saved to JSON: /kaggle/working/results/training_results.json[0m
-133.6s 344 
-133.6s 345 [32m10:36:18[0m | [1mINFO    [0m | [36mMetrics saved to JSON: /kaggle/working/results/training_results.json[0m
-133.6s 346 [32m10:36:18[0m | [1mINFO    [0m | [36mMetrics saved to CSV: /kaggle/working/results/training_metrics.csv[0m
-133.6s 347 
-133.6s 348 [32m10:36:18[0m | [1mINFO    [0m | [36mMetrics saved to CSV: /kaggle/working/results/training_metrics.csv[0m
-133.6s 349 
-133.6s 350 ============================================================
-133.6s 351 TRAINING COMPLETE
-133.6s 352 ============================================================
-133.6s 353 Price predictor:    /kaggle/working/results/lstm_cnn_xauusd.onnx
-133.6s 354 Profitability model: /kaggle/working/results/profitability_classifier.onnx
-133.6s 355 Scalers:            /kaggle/working/results/scalers.csv
-133.6s 356 ============================================================
-133.6s 357 
-139.1s 358 /usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\|'
-139.1s 359 cells[i][c] = re.sub('\\\\\|', '|', cell)
-139.3s 360 /usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\_'
-139.3s 361 text = re.sub(r'_', '\_', text) # Escape underscores in display text
-139.9s 362 /usr/local/lib/python3.12/dist-packages/traitlets/traitlets.py:2915: FutureWarning: --Exporter.preprocessors=["remove_papermill_header.RemovePapermillHeader"] for containers is deprecated in traitlets 5.0. You can pass `--Exporter.preprocessors item` ... multiple times to add items to a list.
-139.9s 363 warn(
-139.9s 364 [NbConvertApp] Converting notebook __notebook__.ipynb to notebook
-140.2s 365 [NbConvertApp] Writing 24416 bytes to __notebook__.ipynb
-142.6s 366 /usr/local/lib/python3.12/dist-packages/traitlets/traitlets.py:2915: FutureWarning: --Exporter.preprocessors=["nbconvert.preprocessors.ExtractOutputPreprocessor"] for containers is deprecated in traitlets 5.0. You can pass `--Exporter.preprocessors item` ... multiple times to add items to a list.
-142.6s 367 warn(
-142.6s 368 [NbConvertApp] Converting notebook __notebook__.ipynb to html
-143.4s 369 [NbConvertApp] Writing 299044 bytes to __results__.html
