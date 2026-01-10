@@ -263,69 +263,34 @@ class ProfitabilityClassifier:
             logger.info(f"Long class balance: {long_pos} wins / {long_neg} losses ({100*long_pos/(long_pos+long_neg):.1f}% win rate)")
             logger.info(f"Short class balance: {short_pos} wins / {short_neg} losses ({100*short_pos/(short_pos+short_neg):.1f}% win rate)")
             
-            # Oversample minority class (wins) to balance BOTH long and short
-            # We need to oversample each independently to avoid corrupting labels
-            
-            # For long: oversample wins
+            # Oversample minority class (wins) to balance the dataset
+            # Simple approach: oversample wins for BOTH long and short together
             long_win_idx = np.where(y_long[:, 0] == 1)[0]
             long_loss_idx = np.where(y_long[:, 0] == 0)[0]
-            
-            # For short: oversample wins  
             short_win_idx = np.where(y_short[:, 0] == 1)[0]
             short_loss_idx = np.where(y_short[:, 0] == 0)[0]
             
-            # Create balanced datasets for each output
-            # Long: oversample wins to match losses
-            if len(long_win_idx) < len(long_loss_idx):
-                long_oversample_count = len(long_loss_idx) - len(long_win_idx)
-                long_oversampled_idx = np.random.choice(long_win_idx, size=long_oversample_count, replace=True)
-                long_all_idx = np.concatenate([np.arange(len(X_train)), long_oversampled_idx])
-            else:
-                long_all_idx = np.arange(len(X_train))
+            # Find samples that are wins for EITHER long or short
+            # These are the "good" samples we want more of
+            either_win = (y_long[:, 0] == 1) | (y_short[:, 0] == 1)
+            win_idx = np.where(either_win)[0]
+            loss_idx = np.where(~either_win)[0]
             
-            # Short: oversample wins to match losses
-            if len(short_win_idx) < len(short_loss_idx):
-                short_oversample_count = len(short_loss_idx) - len(short_win_idx)
-                short_oversampled_idx = np.random.choice(short_win_idx, size=short_oversample_count, replace=True)
-                short_all_idx = np.concatenate([np.arange(len(X_train)), short_oversampled_idx])
-            else:
-                short_all_idx = np.arange(len(X_train))
+            logger.info(f"Samples with at least one win: {len(win_idx)}, both losses: {len(loss_idx)}")
             
-            # Use the larger of the two for X, and create separate y arrays
-            # This ensures both outputs see balanced data
-            max_len = max(len(long_all_idx), len(short_all_idx))
+            # Oversample win samples to balance
+            if len(win_idx) < len(loss_idx):
+                oversample_count = len(loss_idx) - len(win_idx)
+                oversampled_idx = np.random.choice(win_idx, size=oversample_count, replace=True)
+                all_idx = np.concatenate([np.arange(len(X_train)), oversampled_idx])
+                X_train = X_train[all_idx]
+                y_long = y_long[all_idx]
+                y_short = y_short[all_idx]
+                logger.info(f"Oversampled {oversample_count} win samples, new total: {len(X_train)}")
             
-            # Extend shorter index array by repeating
-            if len(long_all_idx) < max_len:
-                extra_needed = max_len - len(long_all_idx)
-                extra_idx = np.random.choice(long_all_idx, size=extra_needed, replace=True)
-                long_all_idx = np.concatenate([long_all_idx, extra_idx])
-            if len(short_all_idx) < max_len:
-                extra_needed = max_len - len(short_all_idx)
-                extra_idx = np.random.choice(short_all_idx, size=extra_needed, replace=True)
-                short_all_idx = np.concatenate([short_all_idx, extra_idx])
-            
-            # Create final training arrays
-            # Use union of indices for X
-            all_unique_idx = np.unique(np.concatenate([long_all_idx, short_all_idx]))
-            X_train_balanced = X_train[long_all_idx]  # Use long indices for X
-            y_long_balanced = y_long[long_all_idx]
-            y_short_balanced = y_short[short_all_idx]
-            
-            # Make sure they're the same length
-            min_len = min(len(y_long_balanced), len(y_short_balanced))
-            X_train_balanced = X_train_balanced[:min_len]
-            y_long_balanced = y_long_balanced[:min_len]
-            y_short_balanced = y_short_balanced[:min_len]
-            
-            logger.info(f"After balancing: {len(X_train_balanced)} samples")
-            logger.info(f"Long balanced: {np.sum(y_long_balanced == 1)} wins / {np.sum(y_long_balanced == 0)} losses")
-            logger.info(f"Short balanced: {np.sum(y_short_balanced == 1)} wins / {np.sum(y_short_balanced == 0)} losses")
-            
-            # Use balanced data
-            X_train = X_train_balanced
-            y_long = y_long_balanced
-            y_short = y_short_balanced
+            # Log final balance
+            logger.info(f"Final long balance: {np.sum(y_long == 1)} wins / {np.sum(y_long == 0)} losses")
+            logger.info(f"Final short balance: {np.sum(y_short == 1)} wins / {np.sum(y_short == 0)} losses")
             
             
             validation_data = None
@@ -359,13 +324,13 @@ class ProfitabilityClassifier:
             callbacks = [
                 ProgressCallback(print_every=10),
                 EarlyStopping(
-                    monitor='val_loss' if validation_data else 'loss',
+                    monitor='loss',  # Monitor training loss, not val_loss (val is imbalanced)
                     patience=patience,
                     restore_best_weights=True,
                     verbose=0
                 ),
                 ReduceLROnPlateau(
-                    monitor='val_loss' if validation_data else 'loss',
+                    monitor='loss',
                     factor=0.5,
                     patience=patience // 2,
                     min_lr=1e-6,
