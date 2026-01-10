@@ -255,47 +255,18 @@ class ProfitabilityClassifier:
             y_long = y_train[:, 0:1]  # Keep as 2D [samples, 1]
             y_short = y_train[:, 1:2]
             
-            # Compute class weights to handle imbalance
-            # This makes the model pay more attention to the minority class (wins)
+            # Compute class balance stats
             long_pos = np.sum(y_long == 1)
             long_neg = np.sum(y_long == 0)
             short_pos = np.sum(y_short == 1)
             short_neg = np.sum(y_short == 0)
             
-            # Weight = total / (2 * class_count) - higher weight for minority
-            long_weight_0 = len(y_long) / (2 * long_neg) if long_neg > 0 else 1.0
-            long_weight_1 = len(y_long) / (2 * long_pos) if long_pos > 0 else 1.0
-            short_weight_0 = len(y_short) / (2 * short_neg) if short_neg > 0 else 1.0
-            short_weight_1 = len(y_short) / (2 * short_pos) if short_pos > 0 else 1.0
-            
             logger.info(f"Training on {len(X_train)} samples (filtered NaN)")
             logger.info(f"Long class balance: {long_pos} wins / {long_neg} losses ({100*long_pos/(long_pos+long_neg):.1f}% win rate)")
             logger.info(f"Short class balance: {short_pos} wins / {short_neg} losses ({100*short_pos/(short_pos+short_neg):.1f}% win rate)")
             
-            # Use class weights instead of oversampling for multi-output model
-            # This is cleaner and doesn't duplicate data
-            # Weight formula: total / (2 * class_count) gives higher weight to minority class
-            class_weight_long = {0: long_weight_0, 1: long_weight_1}
-            class_weight_short = {0: short_weight_0, 1: short_weight_1}
-            
-            logger.info(f"Long class weights: loss={long_weight_0:.2f}, win={long_weight_1:.2f}")
-            logger.info(f"Short class weights: loss={short_weight_0:.2f}, win={short_weight_1:.2f}")
-            
-            # Create sample weights that combine both outputs
-            # For each sample, use the max weight from either output
-            sample_weights = np.ones(len(X_train), dtype=np.float32)
-            for i in range(len(X_train)):
-                long_w = long_weight_1 if y_long[i, 0] == 1 else long_weight_0
-                short_w = short_weight_1 if y_short[i, 0] == 1 else short_weight_0
-                sample_weights[i] = max(long_w, short_w)
-            
-            logger.info(f"Sample weights range: [{sample_weights.min():.2f}, {sample_weights.max():.2f}]")
-            
-            # For multi-output models, sample_weight needs to be a dict
-            sample_weight_dict = {
-                'long_output': sample_weights,
-                'short_output': sample_weights
-            }
+            # Note: Class imbalance is ~37% vs 63%, not severe enough to require special handling
+            # The L2 regularization and dropout should help prevent overfitting to majority class
             
             
             validation_data = None
@@ -348,7 +319,6 @@ class ProfitabilityClassifier:
                 epochs=epochs,
                 batch_size=batch_size,
                 validation_data=validation_data,
-                sample_weight=sample_weight_dict,  # Apply class balancing via sample weights
                 callbacks=callbacks,
                 verbose=0
             )
